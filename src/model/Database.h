@@ -4,12 +4,15 @@
 #include "TimeSpan.h"
 
 struct Database {
+    using Timepoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::days>;
     struct Day {
-        std::chrono::time_point<std::chrono::system_clock, std::chrono::days> timepoint;
+        Timepoint timepoint;
         AVector<_<TimeSpan>> spans;
     };
-    AVector<Day> days;
+    AVector<_<Day>> days;
 
     static Database load();
     void save();
+    void handleEvent(std::chrono::system_clock::time_point timepoint, AOptional<AString> activity);
+
 };

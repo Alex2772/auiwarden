@@ -50,10 +50,10 @@ _<AView> declarative::weekContent(const Database& db) {
     auto day = [&](std::chrono::weekday weekday) {
         auto targetDay = sys_days(utils::date::getLastWeekdayUpTo(weekday, today));
         for (const auto& i : db.days | ranges::view::reverse) {
-            if (i.timepoint != targetDay) {
+            if (i->timepoint != targetDay) {
                 continue;
             }
-            return dayContent(i.spans);
+            return dayContent(i->spans);
         }
         return dayContent({});
     };

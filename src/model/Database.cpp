@@ -6,6 +6,8 @@
 #include <AUI/Json/Conversion.h>
 #include <AUI/IO/AFileInputStream.h>
 #include <AUI/IO/AFileOutputStream.h>
+#include <range/v3/view/reverse.hpp>
+#include <range/v3/numeric/accumulate.hpp>
 
 AJSON_FIELDS(Database,
              AJSON_FIELDS_ENTRY(days)
@@ -46,4 +48,37 @@ Database Database::load() {
 
 void Database::save() {
     AFileOutputStream("database.json") << aui::to_json(*this);
+}
+
+void Database::handleEvent(std::chrono::system_clock::time_point timepoint, AOptional<AString> activity) {
+    auto day = [&] {
+      for (auto& d : days | ranges::view::reverse) {
+          if (d->timepoint == floor<std::chrono::days>(timepoint)) {
+              // append to the existing day
+              return d;
+          }
+      }
+      auto day = _new<Database::Day>(floor<std::chrono::days>(timepoint));
+      days << day;
+      return day;
+    }();
+
+    using namespace std::chrono_literals;
+
+    auto priorTime = ranges::accumulate(day->spans, 0min, std::plus<> {}, [](const _<TimeSpan>& s) { return s->duration; });;
+    auto eventTime = ceil<std::chrono::minutes>(timepoint - floor<std::chrono::days>(timepoint));
+
+    if (priorTime > eventTime) {
+        // this event is the past, ignore it
+        return;
+    }
+    auto diff = eventTime - priorTime;
+    if (diff <= 2min) {
+        if (day->spans.last()->title == activity) {
+            day->spans.last()->duration += diff;
+            return;
+        }
+    }
+    day->spans << _new<TimeSpan>(diff, std::nullopt); // inject idle activity
+    day->spans << _new<TimeSpan>(1min, std::move(activity));
 }
