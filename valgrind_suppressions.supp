@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: MPL-2.0
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# This file is a suppression list for valgrind (dynamic analysis tool). Use this file as such:
+# valgrind --suppressions=valgrind_suppressions.supp  ./Tests
+
+{
+   Backtrace
+   Memcheck:Param
+   openat(filename)
+   ...
+   fun:backtrace_open
+   ...
+}
+
+{
+   ThreadStart
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN7AThread5startEv
+   ...
+}
+
+{
+   IDontknowWhatIsThis
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:RegisterStubCallbacks
+   ...
+}
+
+{
+   fontconfig
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:XML_ParseBuffer
+   ...
+}
+
+{
+   dlopen
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:do_dlopen
+   ...
+}

@@ -1,0 +1,11 @@
+{
+    "clang-format.arguments": [
+        "-assume-filename=${workspaceFolder}/.clang-format"
+    ],
+    "editor.rulers": [
+        120
+    ],
+    "clangd.arguments": [
+        "--compile-commands-dir=build/"
+    ],
+}
