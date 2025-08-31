@@ -12,12 +12,17 @@ using namespace std::chrono_literals;
 TEST(Database, Case1) {
     Database database;
 
-    const auto baseTime = sys_days(2025y/August/20) + 12h;
+    const auto baseTime = floor<minutes>(sys_days(2025y/August/20) + 12h);
     database.handleEvent(baseTime, "Dota 2");
-    auto& day = database.days[0];
-    EXPECT_EQ(day->timepoint, floor<days>(baseTime));
-    EXPECT_EQ(day->spans[0]->title, std::nullopt);
-    EXPECT_EQ(day->spans[0]->duration, 12h);
-    EXPECT_EQ(day->spans[1]->title, "Dota 2");
-    EXPECT_EQ(day->spans[1]->duration, 1min);
+    EXPECT_EQ(database.spans[0]->title, "Dota 2");
+    EXPECT_EQ(database.spans[0]->begin, sys_days(2025y/August/20) + 12h);
+    EXPECT_EQ(database.spans[0]->end, sys_days(2025y/August/20) + 12h);
+
+    database.handleEvent(baseTime + 1min, "Dota 2");
+    EXPECT_EQ(database.spans[0]->end, sys_days(2025y/August/20) + 12h + 1min);
+
+    database.handleEvent(baseTime + 6min, "Dota 2");
+    EXPECT_EQ(database.spans[0]->end, sys_days(2025y/August/20) + 12h + 1min);
+    EXPECT_EQ(database.spans[1]->begin, sys_days(2025y/August/20) + 12h + 6min);
+    EXPECT_EQ(database.spans[1]->end, sys_days(2025y/August/20) + 12h + 6min);
 }

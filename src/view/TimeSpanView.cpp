@@ -30,6 +30,7 @@ _<AView> declarative::activityRectangle(std::chrono::minutes duration, _<AView> 
 }
 
 _<AView> declarative::dayContent(AVector<_<TimeSpan>> spans) {
+    /*
     using namespace std::chrono_literals;
     auto remainingHours = hours(days(1)) - ranges::accumulate(spans, 0min, std::plus<> {}, [](const _<TimeSpan>& s) { return s->duration; });
     auto lastElement = std::array{_new<TimeSpan>(remainingHours)};
@@ -41,6 +42,7 @@ _<AView> declarative::dayContent(AVector<_<TimeSpan>> spans) {
         }
         return activityRectangle(i->duration, std::move(view));
     } AUI_WITH_STYLE { Expanding() };
+    */
 }
 
 _<AView> declarative::weekContent(const Database& db) {
@@ -49,12 +51,13 @@ _<AView> declarative::weekContent(const Database& db) {
 
     auto day = [&](std::chrono::weekday weekday) {
         auto targetDay = sys_days(utils::date::getLastWeekdayUpTo(weekday, today));
+        /*
         for (const auto& i : db.days | ranges::view::reverse) {
             if (i->timepoint != targetDay) {
                 continue;
             }
             return dayContent(i->spans);
-        }
+        }*/
         return dayContent({});
     };
 

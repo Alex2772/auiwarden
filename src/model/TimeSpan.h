@@ -5,6 +5,8 @@
 #include <AUI/Common/AString.h>
 
 struct TimeSpan {
-    std::chrono::minutes duration;
-    AOptional<AString> title;
+    using Timepoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::minutes>;
+    Timepoint begin;
+    Timepoint end;
+    AString title;
 };
