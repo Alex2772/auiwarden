@@ -2,12 +2,16 @@
 
 #include <AUI/Platform/AWindow.h>
 #include "MyUpdater.h"
+#include "model/Database.h"
 
 class MainWindow: public AWindow {
 public:
     MainWindow(_<MyUpdater> updater);
-    static int sum(int a, int b);
+    void onCloseButtonClicked() override;
 
 private:
     _<MyUpdater> mUpdater;
+    Database mDatabase;
+
+    void save();
 };

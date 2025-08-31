@@ -1,47 +1,54 @@
 #include "MainWindow.h"
+#include "view/GridView.h"
+#include "view/TimeSpanView.h"
+#include "model/Database.h"
 #include <AUI/Util/UIBuildingHelpers.h>
 #include <AUI/View/ALabel.h>
 #include <AUI/View/AButton.h>
-#include <AUI/Platform/APlatform.h>
-#include <AUI/View/ADrawableView.h>
 #include <AUI/View/AProgressBar.h>
+#include <AUI/View/AScrollArea.h>
+#include <model/TimeSpan.h>
 
 using namespace declarative;
 
-MainWindow::MainWindow(_<MyUpdater> updater)
-  : AWindow("Project template app", 300_dp, 200_dp), mUpdater(std::move(updater)) {
-    setContents(Centered { Vertical {
-      Centered { Icon { ":img/icon.svg" } AUI_WITH_STYLE { FixedSize(64_dp) } },
-      Centered { Label { "Hello world from AUI!" } },
-      _new<AButton>("Visit GitHub repo")
-          .connect(&AView::clicked, this, [] { APlatform::openUrl("https://github.com/aui-framework/aui"); }),
-      _new<AButton>("Visit docs")
-          .connect(&AView::clicked, this, [] { APlatform::openUrl("https://aui-framework.github.io/"); }),
-      _new<AButton>("Submit an issue")
-          .connect(
-              &AView::clicked, this, [] { APlatform::openUrl("https://github.com/aui-framework/aui/issues/new"); }),
-      CustomLayout {} & mUpdater->status.readProjected([&updater = mUpdater](const std::any& status) -> _<AView> {
-          if (std::any_cast<AUpdater::StatusIdle>(&status)) {
-              return _new<AButton>("Check for updates").connect(&AView::clicked, AUI_SLOT(updater)::checkForUpdates);
-          }
-          if (std::any_cast<AUpdater::StatusCheckingForUpdates>(&status)) {
-              return Label { "Checking for updates..." };
-          }
-          if (auto downloading = std::any_cast<AUpdater::StatusDownloading>(&status)) {
-              return Vertical {
-                  Label { "Downloading..." },
-                  _new<AProgressBar>() & downloading->progress,
-              };
-          }
-          if (std::any_cast<AUpdater::StatusWaitingForApplyAndRestart>(&status)) {
-              return _new<AButton>("Apply update and restart")
-                  .connect(&AView::clicked, AUI_SLOT(updater)::applyUpdateAndRestart);
-          }
-          return nullptr;
-      }),
-      Label { "Btw, 2 + 2 = {}"_format(sum(2, 2)) },
-      Label { "Version: " AUI_PP_STRINGIZE(AUI_CMAKE_PROJECT_VERSION) },
-    } });
+MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_dp), mUpdater(std::move(updater)) {
+    using namespace std::chrono_literals;
+
+    try {
+        mDatabase = Database::load();
+    } catch (const AException& e) {
+        ALogger::warn("MainWindow") << "Can't load database: " << e;
+    }
+
+    setContents(Vertical {
+      Horizontal {
+        _new<ASpacerExpanding>(2),
+        weekDay(std::chrono::Monday),
+        weekDay(std::chrono::Tuesday),
+        weekDay(std::chrono::Wednesday),
+        weekDay(std::chrono::Thursday),
+        weekDay(std::chrono::Friday),
+        weekDay(std::chrono::Saturday),
+        weekDay(std::chrono::Sunday),
+      },
+      AScrollArea::Builder()
+          .withContents(Stacked::Expanding {
+            _new<GridView>() AUI_WITH_STYLE { Expanding() },
+            weekContent(mDatabase),
+          } AUI_WITH_STYLE { MinSize(600_dp, 400_dp) })
+          .build() AUI_WITH_STYLE { Expanding() },
+});
 }
 
-int MainWindow::sum(int a, int b) { return a + b; }
+void MainWindow::save() {
+    try {
+        mDatabase.save();
+    } catch (const AException& e) {
+        ALogger::warn("MainWindow") << "Can't save database: " << e;
+    }
+}
+
+void MainWindow::onCloseButtonClicked() {
+    AWindow::onCloseButtonClicked();
+    save();
+}
