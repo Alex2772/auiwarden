@@ -20,6 +20,13 @@ MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_
         ALogger::warn("MainWindow") << "Can't load database: " << e;
     }
 
+    mDatabase.spans << aui::ptr::manage_shared(new TimeSpan {
+      .begin = floor<std::chrono::minutes>(std::chrono::system_clock::now() - 100min),
+      .end = floor<std::chrono::minutes>(std::chrono::system_clock::now()),
+      .title = "Dota 2",
+    });
+
+    auto gridView = _new<GridView>() AUI_WITH_STYLE { Expanding() };
     setContents(Vertical {
       Horizontal {
         _new<ASpacerExpanding>(2),
@@ -33,8 +40,8 @@ MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_
       },
       AScrollArea::Builder()
           .withContents(Stacked::Expanding {
-            _new<GridView>() AUI_WITH_STYLE { Expanding() },
-            weekContent(mDatabase),
+            gridView,
+            weekContent(gridView, mDatabase),
           } AUI_WITH_STYLE { MinSize(600_dp, 400_dp) })
           .build() AUI_WITH_STYLE { Expanding() },
 });
