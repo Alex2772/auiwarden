@@ -3,6 +3,7 @@
 #include <AUI/Platform/AWindow.h>
 #include "MyUpdater.h"
 #include "model/Database.h"
+#include "model/State.h"
 
 class MainWindow: public AWindow {
 public:
@@ -11,7 +12,7 @@ public:
 
 private:
     _<MyUpdater> mUpdater;
-    Database mDatabase;
+    _<State> mState = _new<State>();
 
     void save();
 };
