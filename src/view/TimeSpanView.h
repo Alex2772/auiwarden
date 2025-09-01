@@ -7,8 +7,8 @@
 #include "GridView.h"
 
 namespace declarative {
-_<AView> weekDay(std::chrono::weekday day);
+_<AView> weekDay(std::chrono::weekday weekday, const _<State>& state);
 _<AView> activityRectangle(std::chrono::minutes duration, _<AView> view);
-_<AView> weekContent(const _<GridView>& gridView, const Database& db);
+_<AView> weekContent(const _<GridView>& gridView, const _<State>& state);
 
 }

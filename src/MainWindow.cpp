@@ -24,18 +24,18 @@ MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_
     setContents(Vertical {
       Horizontal {
         _new<ASpacerExpanding>(2),
-        weekDay(std::chrono::Monday),
-        weekDay(std::chrono::Tuesday),
-        weekDay(std::chrono::Wednesday),
-        weekDay(std::chrono::Thursday),
-        weekDay(std::chrono::Friday),
-        weekDay(std::chrono::Saturday),
-        weekDay(std::chrono::Sunday),
+        weekDay(std::chrono::Monday, mState),
+        weekDay(std::chrono::Tuesday, mState),
+        weekDay(std::chrono::Wednesday, mState),
+        weekDay(std::chrono::Thursday, mState),
+        weekDay(std::chrono::Friday, mState),
+        weekDay(std::chrono::Saturday, mState),
+        weekDay(std::chrono::Sunday, mState),
       },
       AScrollArea::Builder()
           .withContents(Stacked::Expanding {
             gridView,
-            weekContent(gridView, mState->database),
+            weekContent(gridView, mState),
           } AUI_WITH_STYLE { MinSize(600_dp, 400_dp) })
           .build() AUI_WITH_STYLE { Expanding() },
 });

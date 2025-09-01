@@ -33,7 +33,8 @@ void GridView::render(ARenderContext ctx) {
 
     {
         // now
-        auto todaysWeekDay = weekday(floor<days>(*mState->currentTime));
+        const auto localTime = floor<minutes>(std::chrono::current_zone()->to_local(*mState->currentTime));
+        auto todaysWeekDay = weekday(floor<days>(localTime));
         auto columnIndex = [&] {
             // ya russki
             if (todaysWeekDay == Monday) {
@@ -60,7 +61,7 @@ void GridView::render(ARenderContext ctx) {
             return 0;
         }();
         auto x = mapX(columnIndex);
-        auto y = mapY(mState->currentTime - floor<days>(*mState->currentTime));
+        auto y = mapY(localTime - floor<days>(localTime));
 
         ctx.render.line(
             ASolidBrush { 0xdc143c_rgb },
