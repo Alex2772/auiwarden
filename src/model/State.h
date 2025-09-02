@@ -18,5 +18,5 @@ struct State: public AObject {
         return floor<std::chrono::minutes>(std::chrono::system_clock::now());
     };
 
-    _<ATimer> updateTimer = _new<ATimer>(std::chrono::minutes(1));
+    _<ATimer> updateTimer = _new<ATimer>(std::chrono::seconds(60));
 };

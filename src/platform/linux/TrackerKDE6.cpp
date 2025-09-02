@@ -74,17 +74,7 @@ function run() {
 
 run();
     )";
-    mScriptId = *ADBus::session().callWithResult<int32_t>(
-        "org.kde.KWin", // bus
-        "/Scripting", // object
-        "org.kde.kwin.Scripting", // interface
-        "loadScript", // method
-        mTempScript.value().toStdString(),
-        mScriptName);
-    if (mScriptId < 0) {
-        throw AException("Failed to load script");
-    }
-    ALogger::info("TrackerKDE6") << "Script loaded with id: " << mScriptId;
+    injectScript();
 
     mFilter = ADBus::session().addFilter([this, myUniqueName](DBusMessage* msg) {
         auto destination = dbus_message_get_destination(msg);
@@ -122,29 +112,45 @@ run();
     });
 }
 
-TrackerKDE6::~TrackerKDE6() {
+void TrackerKDE6::injectScript() {
+    auto scriptId = *ADBus::session().callWithResult<int32_t>(
+        "org.kde.KWin", // bus
+        "/Scripting", // object
+        "org.kde.kwin.Scripting", // interface
+        "loadScript", // method
+        mTempScript.value().toStdString(), mScriptName);
+    if (scriptId < 0) {
+        throw AException("Failed to load script");
+    }
+    ALogger::info("TrackerKDE6") << "Script loaded with id: " << scriptId;
+
+    *ADBus::session().callWithResult<void>(
+        "org.kde.KWin",                            // bus
+        "/Scripting/Script{}"_format(scriptId),    // object
+        "org.kde.kwin.Script",                     // interface
+        "run");
+
+    *ADBus::session().callWithResult<void>(
+        "org.kde.KWin",                            // bus
+        "/Scripting/Script{}"_format(scriptId),    // object
+        "org.kde.kwin.Script",                     // interface
+        "stop");
+
     ADBus::session().call(
         "org.kde.KWin", // bus
         "/Scripting", // object
         "org.kde.kwin.Scripting", // interface
         "unloadScript", // method
         mScriptName);
+}
+
+TrackerKDE6::~TrackerKDE6() {
 
 }
 
 AString TrackerKDE6::getCurrentActivity() {
     try {
-        ADBus::session().call(
-            "org.kde.KWin",                            // bus
-            "/Scripting/Script{}"_format(mScriptId),   // object
-            "org.kde.kwin.Script",                     // interface
-            "run");
-
-        ADBus::session().call(
-            "org.kde.KWin",                            // bus
-            "/Scripting/Script{}"_format(mScriptId),   // object
-            "org.kde.kwin.Script",                     // interface
-            "stop");
+        injectScript();
 
         return mLastData;
     } catch (const AException& e) {

@@ -12,9 +12,9 @@ public:
 
 private:
     AString mScriptName = "auiwarden_{}";
-    int32_t mScriptId = -1;
     APathOwner mTempScript {APath::nextRandomTemporary()};
     AString mLastData;
     ADBus::MessageFilter::Ownership mFilter{nullptr, nullptr};
 
+    void injectScript();
 };
