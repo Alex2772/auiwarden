@@ -10,7 +10,10 @@
 #include <range/v3/numeric/accumulate.hpp>
 #include <AUI/Logging/ALogger.h>
 
-AJSON_FIELDS(Database, AJSON_FIELDS_ENTRY(spans))
+AJSON_FIELDS(Database,
+             AJSON_FIELDS_ENTRY(spans)
+             AJSON_FIELDS_ENTRY(groups)
+             )
 
 // AJSON_FIELDS(Database::Day,
 //              AJSON_FIELDS_ENTRY(spans)
@@ -18,6 +21,11 @@ AJSON_FIELDS(Database, AJSON_FIELDS_ENTRY(spans))
 //)
 
 AJSON_FIELDS(TimeSpan, AJSON_FIELDS_ENTRY(title) AJSON_FIELDS_ENTRY(begin) AJSON_FIELDS_ENTRY(end))
+AJSON_FIELDS(Group,
+             AJSON_FIELDS_ENTRY(name)
+             AJSON_FIELDS_ENTRY(windowTitleContains)
+             AJSON_FIELDS_ENTRY(color)
+             )
 
 template <typename T1, typename T2>
 struct AJsonConv<std::chrono::duration<T1, T2>> {

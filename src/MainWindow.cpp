@@ -7,6 +7,8 @@
 #include <AUI/View/AButton.h>
 #include <AUI/View/AProgressBar.h>
 #include <AUI/View/AScrollArea.h>
+#include <AUI/View/ADrawableView.h>
+#include <settings/SettingsWindow.h>
 #include <model/TimeSpan.h>
 
 using namespace declarative;
@@ -22,6 +24,15 @@ MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_
 
     auto gridView = _new<GridView>(mState) AUI_WITH_STYLE { Expanding() };
     setContents(Vertical {
+      Horizontal {
+        SpacerExpanding{},
+        Button {
+          .content = Icon { ":img/settings.svg" },
+          .onClick = [&] {
+              _new<SettingsWindow>(mState, this)->show();
+          },
+        },
+      },
       Horizontal {
         _new<ASpacerExpanding>(2),
         weekDay(std::chrono::Monday, mState),
