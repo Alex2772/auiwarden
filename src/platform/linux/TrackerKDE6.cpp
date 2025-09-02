@@ -148,13 +148,11 @@ TrackerKDE6::~TrackerKDE6() {
 
 }
 
-AString TrackerKDE6::getCurrentActivity() {
+void TrackerKDE6::getCurrentActivity(ITracker::Activity& activity) {
     try {
         injectScript();
-
-        return mLastData;
+        activity.activeWindowTitle = mLastData;
     } catch (const AException& e) {
         ALogger::err("TrackerKDE6") << "Can't get current activity: " << e;
-        throw;
     }
 }

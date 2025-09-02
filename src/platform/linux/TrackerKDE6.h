@@ -8,7 +8,7 @@ class TrackerKDE6 : public ITracker {
 public:
     TrackerKDE6();
     ~TrackerKDE6() override;
-    AString getCurrentActivity() override;
+    void getCurrentActivity(Activity& activity) override;
 
 private:
     AString mScriptName = "auiwarden_{}";

@@ -39,6 +39,7 @@ MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_
           } AUI_WITH_STYLE { MinSize(600_dp, 400_dp) })
           .build() AUI_WITH_STYLE { Expanding() },
 });
+    connect(mState->updateTimer->fired, me::save);
 }
 
 void MainWindow::save() {

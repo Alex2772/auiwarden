@@ -42,3 +42,19 @@ aui_app(TARGET ${PROJECT_NAME}
         VENDOR "AUI Project"
         ICON "assets/img/icon.svg"
 )
+
+if(AUI_PLATFORM_LINUX)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/wayland-generated-protocols)
+    file(GLOB_RECURSE WAYLAND_PROTOCOLS wayland-protocols/*.xml)
+    foreach (WAYLAND_PROTOCOL_PATH ${WAYLAND_PROTOCOLS})
+        get_filename_component(WAYLAND_PROTOCOL_NAME ${WAYLAND_PROTOCOL_PATH} NAME)
+        set(OUTPUT_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/wayland-generated/protocols/${WAYLAND_PROTOCOL_NAME})
+        add_custom_command(OUTPUT ${OUTPUT_NAME}.h
+                COMMAND wayland-scanner client-header ${WAYLAND_PROTOCOL_PATH} ${OUTPUT_NAME}.h)
+        add_custom_command(OUTPUT ${OUTPUT_NAME}.c
+                COMMAND wayland-scanner private-code ${WAYLAND_PROTOCOL_PATH} ${OUTPUT_NAME}.c)
+        target_sources(${PROJECT_NAME} PRIVATE ${OUTPUT_NAME}.h ${OUTPUT_NAME}.c)
+    endforeach ()
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+    target_link_libraries(${PROJECT_NAME} PRIVATE wayland-client)
+endif()

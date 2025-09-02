@@ -8,6 +8,7 @@
 #include <AUI/IO/AFileOutputStream.h>
 #include <range/v3/view/reverse.hpp>
 #include <range/v3/numeric/accumulate.hpp>
+#include <AUI/Logging/ALogger.h>
 
 AJSON_FIELDS(Database, AJSON_FIELDS_ENTRY(spans))
 
@@ -38,6 +39,7 @@ Database Database::load() { return aui::from_json<Database>(AJson::fromStream(AF
 void Database::save() { AFileOutputStream("database.json") << aui::to_json(*this); }
 
 void Database::handleEvent(TimeSpan::Timepoint timepoint, AString activity) {
+    ALOG_DEBUG("Database") << "{}, {}"_format(timepoint, activity);
     using namespace std::chrono_literals;
 
     if (!spans->empty()) {

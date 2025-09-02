@@ -14,10 +14,12 @@ TrackerManager::TrackerManager(_<State> state): mTrackers(getNativeTrackers()), 
 }
 
 void TrackerManager::update() {
+    ITracker::Activity activity;
     for (const auto& tracker: mTrackers) {
-        if (auto result = tracker->getCurrentActivity(); !result.empty()) {
-            mState->database.handleEvent(*mState->currentTime, std::move(result));
-            return;
-        }
+        tracker->getCurrentActivity(activity);
     }
+    if (activity.idle == Idle::AWAY_FROM_KEYBOARD) {
+        return;
+    }
+    mState->database.handleEvent(*mState->currentTime, std::move(activity.activeWindowTitle));
 }
