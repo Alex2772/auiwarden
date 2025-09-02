@@ -36,11 +36,14 @@ static _<AView> dayContent(
         auto end = current_zone()->to_local(span->end);
         return begin >= day && begin <= day + days(1) || end >= day && end <= day + days(1);
     };
+    auto keyFunction = [dayUtc](const _<TimeSpan>& span) {
+        return aui::for_each_ui::defaultKey(span, 0L) ^ aui::for_each_ui::defaultKey(dayUtc.time_since_epoch().count(), 0L);
+    };
     return AUI_DECLARATIVE_FOR(i, spans | ranges::view::filter(intersectsWithDay), AAbsoluteLayout) {
         ALogger::debug("TimeSpanView") << "dayContent: " << i->title;
         _<AView> view = Vertical {
             Label { i->title } AUI_WITH_STYLE { BackgroundSolid { AColor::RED }, Expanding {} },
-        };
+        } AUI_WITH_STYLE { AOverflow::HIDDEN };
         struct State {
             APropertyPrecomputed<glm::ivec2> position;
             APropertyPrecomputed<glm::ivec2> size;
@@ -70,7 +73,10 @@ static _<AView> dayContent(
             view->setGeometry(state->position, state->size);
         });
         return view;
-    } AUI_WITH_STYLE { Expanding() };
+    } AUI_LET {
+        it->setExpanding();
+        it->setKeyFunction(keyFunction);
+    };
 }
 
 _<AView> declarative::weekContent(const _<GridView>& gridView, const _<State>& state) {
