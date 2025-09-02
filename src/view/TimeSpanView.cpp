@@ -28,7 +28,7 @@ _<AView> declarative::weekDay(std::chrono::weekday weekday, const _<State>& stat
 
 static _<AView> dayContent(
     const _<GridView>& gridView, std::chrono::time_point<std::chrono::system_clock, std::chrono::days> dayUtc,
-    const AVector<_<TimeSpan>>& spans) {
+    const AProperty<AVector<_<TimeSpan>>>& spans) {
     auto day = floor<days>(current_zone()->to_local(dayUtc));
     using namespace std::chrono_literals;
     auto intersectsWithDay = [=](const _<TimeSpan>& span) {
@@ -37,6 +37,7 @@ static _<AView> dayContent(
         return begin >= day && begin <= day + days(1) || end >= day && end <= day + days(1);
     };
     return AUI_DECLARATIVE_FOR(i, spans | ranges::view::filter(intersectsWithDay), AAbsoluteLayout) {
+        ALogger::debug("TimeSpanView") << "dayContent: " << i->title;
         _<AView> view = Vertical {
             Label { i->title } AUI_WITH_STYLE { BackgroundSolid { AColor::RED }, Expanding {} },
         };

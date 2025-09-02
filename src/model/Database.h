@@ -1,6 +1,7 @@
 #pragma once
 
 #include <AUI/Common/AVector.h>
+#include <AUI/Common/AProperty.h>
 #include "TimeSpan.h"
 
 struct Database {
@@ -11,7 +12,7 @@ struct Database {
     };
     AVector<_<Day>> days;
     */
-    AVector<_<TimeSpan>> spans;
+    AProperty<AVector<_<TimeSpan>>> spans;
 
     static Database load();
     void save();

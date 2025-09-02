@@ -1,11 +1,24 @@
 #pragma once
 
+#include <AUI/Common/ATimer.h>
 #include "model/Database.h"
+#include "model/State.h"
 
-class Tracker {
+class ITracker {
 public:
-    explicit Tracker(_<Database> database) : mDatabase(std::move(database)) {}
+    virtual ~ITracker() = default;
+    virtual AString getCurrentActivity() = 0;
+};
+
+class TrackerManager: public AObject {
+public:
+    TrackerManager(_<State> state);
 
 private:
-    _<Database> mDatabase;
+    AVector<_<ITracker>> mTrackers;
+    _<State> mState;
+
+    static AVector<_<ITracker>> getNativeTrackers();
+
+    void update();
 };
