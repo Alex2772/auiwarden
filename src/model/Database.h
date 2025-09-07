@@ -6,13 +6,6 @@
 #include "Group.h"
 
 struct Database {
-    /*
-    using Timepoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::days>;
-    struct Day {
-        Timepoint timepoint;
-    };
-    AVector<_<Day>> days;
-    */
     AProperty<AVector<_<TimeSpan>>> spans;
     AProperty<AVector<_<Group>>> groups = AVector<_<Group>>{
         aui::ptr::manage_shared(new Group{
@@ -32,5 +25,4 @@ struct Database {
     static Database load();
     void save();
     void handleEvent(TimeSpan::Timepoint timepoint, AString activity);
-
 };

@@ -7,7 +7,7 @@
 
 using namespace std::chrono_literals;
 
-static constexpr auto TIMEOUT = std::chrono::seconds(1min) / 2;
+static constexpr auto TIMEOUT = 1min;
 
 TrackerWaylandExtIdleNotifyV1::TrackerWaylandExtIdleNotifyV1() {
     mDisplay = wl_display_connect(nullptr);

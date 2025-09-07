@@ -68,17 +68,18 @@ Groups::Groups(_<State> state) {
               .withExpanding()
               .withContents(
                   AUI_DECLARATIVE_FOR(i, *state->database.groups, AVerticalLayout) {
-                  _<AView> l = Label { AUI_REACT(i->name) };
-                  l->setExpanding();
-                  connect(l->clicked, [this, i] { mSelectedGroup = i; });
-                  return Horizontal {
+                  _<AView> v = Horizontal {
                       Stacked { colorView(i->color) } AUI_WITH_STYLE { FixedSize(10_pt) },
-                      l,
+                      Label { AUI_REACT(i->name) } AUI_WITH_STYLE { Expanding() },
                       Button { "-", [selectFirst, state, i] {
                                   state->database.groups.writeScope()->removeAll(i);
                                   selectFirst();
                               } },
                   };
+                  connect(v->clicked, [this, i] {
+                      mSelectedGroup = i;
+                  });
+                  return v;
               })
               .build() AUI_WITH_STYLE { BackgroundSolid { AColor::WHITE } },
         },
