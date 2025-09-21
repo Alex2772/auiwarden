@@ -23,10 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
-        include:
-          - os: windows-latest
-            additional_cmake_flags: '-A x64 -DCMAKE_GENERATOR_TOOLSET=v142'
+        os: [ubuntu-latest]
 
     steps:
       - name: Fetch sources

@@ -8,7 +8,7 @@ option(BUILD_SHARED_LIBS "Build shared libs" OFF)
 option(AUIB_FORCE_PRECOMPILED "AUI.Boot: force precompiled dependencies" OFF)
 option(AUIB_NO_PRECOMPILED "AUI.Boot: disable precompiled dependencies" OFF)
 
-set(AUI_VERSION 369ad281ebcdac1488469273e7ba6a8e6eb50a62)
+set(AUI_VERSION bf86b65e21a4a19ac1e03806f482ae436f9c84a2)
 
 # Use AUI.Boot
 file(
@@ -21,6 +21,11 @@ include(${CMAKE_CURRENT_BINARY_DIR}/aui.boot.cmake)
 auib_import(aui https://github.com/aui-framework/aui
         COMPONENTS core views curl json crypt updater
         VERSION ${AUI_VERSION})
+
+
+if(NOT AUI_PLATFORM_LINUX)
+    message(FATAL_ERROR "This software is designed specifically for Linux.")
+endif ()
 
 
 # Create the executable. This function automatically links all sources from the src/ folder,
