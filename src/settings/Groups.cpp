@@ -63,7 +63,7 @@ Groups::Groups(_<State> state) {
       AText::fromString("Grouping allows to categorize time spans into groups (e.g. work, home, gaming, etc.)"),
       Horizontal::Expanding {
         Vertical::Expanding {
-          Button { "Add group", [this, state] { state->database.groups << (mSelectedGroup = _new<Group>("New group")); } },
+          Button { Label { "Add group" }, [this, state] { state->database.groups << (mSelectedGroup = _new<Group>("New group")); } },
           AScrollArea::Builder()
               .withExpanding()
               .withContents(
@@ -71,7 +71,7 @@ Groups::Groups(_<State> state) {
                   _<AView> v = Horizontal {
                       Stacked { colorView(i->color) } AUI_WITH_STYLE { FixedSize(10_pt) },
                       Label { AUI_REACT(i->name) } AUI_WITH_STYLE { Expanding() },
-                      Button { "-", [selectFirst, state, i] {
+                      Button { Label { "-" }, [selectFirst, state, i] {
                                   state->database.groups.writeScope()->removeAll(i);
                                   selectFirst();
                               } },

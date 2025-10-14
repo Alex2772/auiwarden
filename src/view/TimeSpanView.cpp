@@ -18,9 +18,8 @@ _<AView> declarative::weekDay(std::chrono::weekday weekday, const _<State>& stat
         return utils::date::getLastWeekdayUpTo(
             weekday, year_month_day(floor<days>(current_zone()->to_local(*state->currentTime))));
     };
-    return Vertical {
-        Label { "{}"_format(weekday) },
-        Label { AUI_REACT("{:%d}"_format(day())) },
+    return Horizontal {
+        Label { AUI_REACT("{} {:%d}"_format(weekday, day())) },
     } AUI_WITH_STYLE { Expanding() };
 }
 
@@ -117,7 +116,7 @@ static _<AView> dayContent(
               [gridView, i] {
                   auto timeRelativeToDay = minutes(i.timespan.end - i.timespan.begin) + 1min;
                   auto y = int((timeRelativeToDay).count()) * gridView->size()->y / int(minutes(days(1)).count());
-                  return glm::ivec2 { gridView->size()->x / 8, glm::max(y, 1) };
+                  return glm::ivec2 { gridView->size()->x / 7, glm::max(y, 1) };
               },
         });
         AObject::connect(state->position, view, [view = view.get(), state] {
@@ -144,7 +143,7 @@ _<AView> declarative::weekContent(const _<GridView>& gridView, const _<State>& s
     };
 
     return Horizontal::Expanding {
-        _new<ASpacerExpanding>(2),  day(std::chrono::Monday), day(std::chrono::Tuesday),  day(std::chrono::Wednesday),
+        day(std::chrono::Monday), day(std::chrono::Tuesday),  day(std::chrono::Wednesday),
         day(std::chrono::Thursday), day(std::chrono::Friday), day(std::chrono::Saturday), day(std::chrono::Sunday),
     } AUI_WITH_STYLE { LayoutSpacing { 1_px } };
 }

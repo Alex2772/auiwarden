@@ -16,5 +16,6 @@ private:
     _<State> mState = _new<State>();
     TrackerManager mTrackerManager = mState;
 
+    void inflate();
     void save();
 };

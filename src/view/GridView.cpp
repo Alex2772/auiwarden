@@ -16,15 +16,12 @@ void GridView::render(ARenderContext ctx) {
     using namespace std::chrono;
     using namespace std::chrono_literals;
 
-    auto mapX = [this](int columnIndex) { return (columnIndex + 1) * getSize().x / 8; };
+    auto mapX = [this](int columnIndex) { return columnIndex * getSize().x / 7; };
     auto mapY = [this](std::chrono::minutes h) { return h.count() * getSize().y / minutes(days(1)).count(); };
 
     for (auto h = hours(0); h <= days(1); ++h) {
         const int y = mapY(h);
-        ctx.render.line(ASolidBrush { GRID_COLOR }, { getSize().x / 8 - OFFSET, y }, { getSize().x + OFFSET, y });
-        RenderHints::PushState s(ctx.render);
-        ctx.render.setColor(GRID_COLOR);
-        ctx.render.string({ 0, y - FONT_SIZE / 2.f }, "{:%H:%M}"_format(h), { .size = (unsigned int) (FONT_SIZE) });
+        ctx.render.line(ASolidBrush { GRID_COLOR }, { 0, y }, { getSize().x + OFFSET, y });
     }
     for (int d = 0; d <= 7; ++d) {
         const int x = mapX(d);
