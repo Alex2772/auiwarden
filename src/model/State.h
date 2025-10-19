@@ -10,13 +10,21 @@ struct State: public AObject {
         connect(updateTimer->fired, [this]() {
             currentTime.invalidate();
         });
-//        updateTimer->start();
+#if !AUI_DEBUG
+        updateTimer->start();
+#endif
     }
 
     Database database;
     APropertyPrecomputed<TimeSpan::Timepoint> currentTime = [] {
         return floor<std::chrono::minutes>(std::chrono::system_clock::now());
     };
+
+    enum class Page {
+        MAIN,
+        PIE,
+    };
+    AProperty<Page> currentPage = Page::MAIN;
 
     _<ATimer> updateTimer = _new<ATimer>(std::chrono::seconds(60));
 };

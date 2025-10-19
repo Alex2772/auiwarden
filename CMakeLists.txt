@@ -8,7 +8,7 @@ option(BUILD_SHARED_LIBS "Build shared libs" OFF)
 option(AUIB_FORCE_PRECOMPILED "AUI.Boot: force precompiled dependencies" OFF)
 option(AUIB_NO_PRECOMPILED "AUI.Boot: disable precompiled dependencies" OFF)
 
-set(AUI_VERSION 50a7802)
+set(AUI_VERSION 8696469aaf61452a3af54227bbad76657462f034)
 
 # Use AUI.Boot
 file(

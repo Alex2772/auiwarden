@@ -33,60 +33,65 @@ static _<AView> colorView(const AProperty<AColor>& color) {
 static _<AView> groupEditor(const _<Group>& group) {
     return GroupBox {
         Horizontal {
-          Button { colorView(group->color), [group]{
-                      group->color = Group::nextRandomColor();
-                  } },
+          Button {
+            colorView(group->color),
+            [group] { group->color = Group::nextRandomColor(); },
+          },
           _new<ATextField>() AUI_WITH_STYLE { Expanding() } && group->name,
-        },
+        } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
         Vertical {
           AText::fromString("List of window captions that will belong to this group. Use new line to separate them."),
-          AScrollArea::Builder().withContents(
-              _new<ATextArea>() && group->windowTitleContains
-                  ).build() << ".input-field",
-        },
+          AScrollArea::Builder().withContents(_new<ATextArea>() && group->windowTitleContains).build()
+              << ".input-"
+                 "field",
+        } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
     } AUI_WITH_STYLE { Expanding() };
 }
-
 
 Groups::Groups(_<State> state) {
     auto tabHost = _new<ATabView>();
 
     auto selectFirst = [this, state] {
-      if (!state->database.groups->empty()) {
-          mSelectedGroup = state->database.groups->first();
-      } else {
-          mSelectedGroup = nullptr;
-      }
+        if (!state->database.groups->empty()) {
+            mSelectedGroup = state->database.groups->first();
+        } else {
+            mSelectedGroup = nullptr;
+        }
     };
 
     setContents(Vertical::Expanding {
       AText::fromString("Grouping allows to categorize time spans into groups (e.g. work, home, gaming, etc.)"),
       Horizontal::Expanding {
         Vertical::Expanding {
-          Button { Label { "Add group" }, [this, state] { state->database.groups << (mSelectedGroup = _new<Group>("New group")); } },
+          Button {
+            Label { "Add group" },
+            [this, state] { state->database.groups << (mSelectedGroup = _new<Group>("New group")); },
+          },
           AScrollArea::Builder()
               .withExpanding()
               .withContents(
                   AUI_DECLARATIVE_FOR(i, *state->database.groups, AVerticalLayout) {
                   _<AView> v = Horizontal {
-                      Stacked { colorView(i->color) } AUI_WITH_STYLE { FixedSize(10_pt) },
-                      Label { AUI_REACT(i->name) } AUI_WITH_STYLE { Expanding() },
-                      Button { Label { "-" }, [selectFirst, state, i] {
-                                  state->database.groups.writeScope()->removeAll(i);
-                                  selectFirst();
-                              } },
-                  };
-                  connect(v->clicked, [this, i] {
-                      mSelectedGroup = i;
-                  });
+                      Centered { Centered { colorView(i->color) } AUI_WITH_STYLE { FixedSize(10_dp) } },
+                      Centered::Expanding { Label { AUI_REACT(i->name) } AUI_WITH_STYLE { Expanding(1, 0) } },
+                      Button {
+                        Label { "-" },
+                        [selectFirst, state, i] {
+                            state->database.groups.writeScope()->removeAll(i);
+                            selectFirst();
+                        } },
+                  } AUI_WITH_STYLE { LayoutSpacing { 2_dp } };
+                  connect(v->clicked, [this, i] { mSelectedGroup = i; });
                   return v;
-              })
+              } AUI_WITH_STYLE { LayoutSpacing { 2_dp }, Padding { 0, 4_dp } })
               .build() AUI_WITH_STYLE { BackgroundSolid { AColor::WHITE } },
-        },
+        } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
         CustomLayout::Expanding {} & mSelectedGroup.readProjected([state](const _<Group>& selectedGroup) -> _<AView> {
             if (selectedGroup == nullptr) {
                 return Centered { Label { "No group selected" } };
             }
             return groupEditor(selectedGroup);
-        }) } });
+        }),
+      } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
+    } AUI_WITH_STYLE { LayoutSpacing { 4_dp } });
 }

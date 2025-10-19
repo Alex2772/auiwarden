@@ -25,4 +25,6 @@ struct Database {
     static Database load();
     void save();
     void handleEvent(TimeSpan::Timepoint timepoint, AString activity);
+
+    _<Group> findGroup(const AString& name) const;
 };

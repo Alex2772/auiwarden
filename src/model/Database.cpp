@@ -7,6 +7,7 @@
 #include <AUI/IO/AFileInputStream.h>
 #include <AUI/IO/AFileOutputStream.h>
 #include <range/v3/view/reverse.hpp>
+#include <range/v3/algorithm.hpp>
 #include <range/v3/numeric/accumulate.hpp>
 #include <AUI/Logging/ALogger.h>
 
@@ -63,4 +64,20 @@ void Database::handleEvent(TimeSpan::Timepoint timepoint, AString activity) {
       .end = timepoint,
       .title = std::move(activity),
     });
+}
+
+_<Group> Database::findGroup(const AString& name) const {
+    auto group = ranges::find_if(*groups, [&](const _<Group>& group) {
+      auto s = group->windowTitleContains->split('\n');
+      return ranges::any_of(s, [&](const AString& probe) {
+        if (probe.empty()) {
+            return false;
+        }
+        return name.lowercase().contains(probe.lowercase());
+      });
+    });
+    if (group == groups->end()) {
+        return nullptr;
+    }
+    return *group;
 }

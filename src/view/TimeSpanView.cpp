@@ -33,16 +33,9 @@ static TimeSpanViewModel groupify(const Database& database, const TimeSpan& span
     for (const auto& group : groups) {
         aui::react::DependencyObserverRegistrar::addDependency(group->windowTitleContains.changed);
     }
-    auto group = ranges::find_if(groups, [&](const _<Group>& group) {
-        auto s = group->windowTitleContains->split('\n');
-        return ranges::any_of(s, [&](const AString& probe) {
-            if (probe.empty()) {
-                return false;
-            }
-            return span.title.lowercase().contains(probe.lowercase());
-        });
-    });
-    if (group == groups.end()) {
+    auto group = database.findGroup(span.title);
+
+    if (group == nullptr) {
         return {
             .timespan = span,
             .color = AColor::RED,
@@ -52,9 +45,9 @@ static TimeSpanViewModel groupify(const Database& database, const TimeSpan& span
         .timespan = {
             .begin = span.begin,
             .end = span.end,
-          .title = *(*group)->name,
+            .title = group->name,
         },
-        .color = (*group)->color,
+        .color = group->color,
     };
 }
 
