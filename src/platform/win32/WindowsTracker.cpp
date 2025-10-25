@@ -13,12 +13,12 @@ void WindowsTracker::getCurrentActivity(Activity& activity) {
         return;
 
     WCHAR wbuf[512] {};
-    int wbuf_len = GetWindowTextW(window, wbuf, sizeof(wbuf) - sizeof(WCHAR));
+    int wbuf_len = GetWindowTextW(window, wbuf, std::size(wbuf));
     if (!wbuf_len)
         return;
 
     CHAR ubuf[1024] {};
-    int ubuf_len = WideCharToMultiByte(CP_UTF8, 0, wbuf, wbuf_len, ubuf, sizeof(ubuf) - sizeof(CHAR), nullptr, nullptr);
+    int ubuf_len = WideCharToMultiByte(CP_UTF8, 0, wbuf, wbuf_len, ubuf, std::size(ubuf), nullptr, nullptr);
     if (!ubuf_len)
         return;
 
