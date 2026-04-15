@@ -6,11 +6,15 @@ with the [AUI](https://github.com/aui-framework/aui) framework.
 
 ![Screenshot](screenshot.png)
 
-Self-tracking productivity software. Designed specifically for nerdy weirdos spending their entire day with a single PC,
-on KDE6/Wayland.
+Self-tracking productivity software. Designed specifically for nerdy weirdos spending their entire day with a single PC.
 
 “A gentle, ever-present companion on your desktop, quietly watching over your computer activity—making sure you know
 just how productive (or distracted) you are, without ever being judgmental or invasive.”
+
+## Supported platforms
+
+- **Windows**
+- **Linux** (KDE6/Wayland only).
 
 ## Features
 
