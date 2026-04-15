@@ -75,6 +75,7 @@ static _<AView> dayContent(
         return hash;
     };
     auto toGroups =
+        ranges::view::reverse |
         ranges::view::filter(intersectsWithDay) |
         ranges::view::transform([=](const _<TimeSpan>& span) { return groupify(state->database, *span); }) |
         ranges::view::chunk_by([](const TimeSpanViewModel& a, const TimeSpanViewModel& b) {
