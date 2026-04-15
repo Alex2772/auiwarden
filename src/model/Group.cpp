@@ -3,6 +3,7 @@
 //
 #include "Group.h"
 #include <random>
+#include <chrono>
 
 AColor Group::nextRandomColor() {
     static std::default_random_engine re;
