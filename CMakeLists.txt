@@ -23,8 +23,8 @@ auib_import(aui https://github.com/aui-framework/aui
         VERSION ${AUI_VERSION})
 
 
-if(NOT AUI_PLATFORM_LINUX)
-    message(FATAL_ERROR "This software is designed specifically for Linux.")
+if(NOT AUI_PLATFORM_LINUX AND NOT AUI_PLATFORM_WIN)
+    message(FATAL_ERROR "This software is designed specifically for Linux and Windows.")
 endif ()
 
 
@@ -33,13 +33,17 @@ endif ()
 aui_executable(${PROJECT_NAME})
 
 
-auib_use_system_libs_begin()
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(DBUS REQUIRED IMPORTED_TARGET dbus-1)
-auib_use_system_libs_end()
+if (AUI_PLATFORM_LINUX)
+    auib_use_system_libs_begin()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(DBUS REQUIRED IMPORTED_TARGET dbus-1)
+    auib_use_system_libs_end()
+
+    aui_link(${PROJECT_NAME} PRIVATE PkgConfig::DBUS)
+endif ()
 
 # Link required libs
-aui_link(${PROJECT_NAME} PRIVATE aui::core aui::views aui::updater aui::json PkgConfig::DBUS)
+aui_link(${PROJECT_NAME} PRIVATE aui::core aui::views aui::updater aui::json)
 
 # Compile assets
 aui_compile_assets(${PROJECT_NAME})
