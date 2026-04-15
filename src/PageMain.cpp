@@ -15,7 +15,7 @@ using namespace declarative;
 using namespace ass;
 
 _<AView> views::pageMain(const _<State>& state) {
-    auto gridView = _new<GridView>(state) AUI_WITH_STYLE { Expanding() };
+    auto gridView = _new<GridView>(state) AUI_OVERRIDE_STYLE { Expanding() };
     return Vertical::Expanding {
         Horizontal {
             SpacerFixed { 40_dp },
@@ -30,7 +30,7 @@ _<AView> views::pageMain(const _<State>& state) {
         AScrollArea::Builder()
             .withContents(Horizontal {
                 AUI_DECLARATIVE_FOR(i, ranges::view::iota(0, 25), AVerticalLayout) {
-                    auto l = Label { "{}:00"_format(i % 24) } AUI_WITH_STYLE {
+                    auto l = Label { "{}:00"_format(i % 24) } AUI_OVERRIDE_STYLE {
                         TransformOffset { 0, 11_pt / -2.f },
                         ATextAlign::RIGHT,
                         Padding { 0, 4_dp },
@@ -44,12 +44,12 @@ _<AView> views::pageMain(const _<State>& state) {
                         std::move(l),
                         SpacerExpanding {},
                     };
-                } AUI_WITH_STYLE { FixedSize{ 40_dp, {} } },
+                } AUI_OVERRIDE_STYLE { FixedSize{ 40_dp, {} } },
                 Stacked::Expanding {
                     gridView,
                         weekContent(gridView, state),
-                } AUI_WITH_STYLE { MinSize(600_dp, 400_dp) },
+                } AUI_OVERRIDE_STYLE { MinSize(600_dp, 400_dp) },
             })
-            .build() AUI_WITH_STYLE { Expanding() },
+            .build() AUI_OVERRIDE_STYLE { Expanding() },
     };
 }

@@ -2,6 +2,7 @@
 
 #include <AUI/Common/AProperty.h>
 #include <AUI/Common/AString.h>
+#include <AUI/Common/AColor.h>
 
 struct Group {
     AProperty<AString> name;

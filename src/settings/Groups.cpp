@@ -37,15 +37,15 @@ static _<AView> groupEditor(const _<Group>& group) {
             colorView(group->color),
             [group] { group->color = Group::nextRandomColor(); },
           },
-          _new<ATextField>() AUI_WITH_STYLE { Expanding() } && group->name,
-        } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
+          _new<ATextField>() AUI_OVERRIDE_STYLE { Expanding() } && group->name,
+        } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } },
         Vertical {
           AText::fromString("List of window captions that will belong to this group. Use new line to separate them."),
           AScrollArea::Builder().withContents(_new<ATextArea>() && group->windowTitleContains).build()
               << ".input-"
                  "field",
-        } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
-    } AUI_WITH_STYLE { Expanding() };
+        } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } },
+    } AUI_OVERRIDE_STYLE { Expanding() };
 }
 
 Groups::Groups(_<State> state) {
@@ -72,26 +72,29 @@ Groups::Groups(_<State> state) {
               .withContents(
                   AUI_DECLARATIVE_FOR(i, *state->database.groups, AVerticalLayout) {
                   _<AView> v = Horizontal {
-                      Centered { Centered { colorView(i->color) } AUI_WITH_STYLE { FixedSize(10_dp) } },
-                      Centered::Expanding { Label { AUI_REACT(i->name) } AUI_WITH_STYLE { Expanding(1, 0) } },
+                      Centered { Centered { colorView(i->color) } AUI_OVERRIDE_STYLE { FixedSize(10_dp) } },
+                      Centered::Expanding { Label { AUI_REACT(i->name) } AUI_OVERRIDE_STYLE { Expanding(1, 0) } },
                       Button {
                         Label { "-" },
                         [selectFirst, state, i] {
                             state->database.groups.writeScope()->removeAll(i);
                             selectFirst();
                         } },
-                  } AUI_WITH_STYLE { LayoutSpacing { 2_dp } };
+                  } AUI_OVERRIDE_STYLE { LayoutSpacing { 2_dp } };
                   connect(v->clicked, [this, i] { mSelectedGroup = i; });
                   return v;
-              } AUI_WITH_STYLE { LayoutSpacing { 2_dp }, Padding { 0, 4_dp } })
-              .build() AUI_WITH_STYLE { BackgroundSolid { AColor::WHITE } },
-        } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
-        CustomLayout::Expanding {} & mSelectedGroup.readProjected([state](const _<Group>& selectedGroup) -> _<AView> {
-            if (selectedGroup == nullptr) {
-                return Centered { Label { "No group selected" } };
-            }
-            return groupEditor(selectedGroup);
-        }),
-      } AUI_WITH_STYLE { LayoutSpacing { 4_dp } },
-    } AUI_WITH_STYLE { LayoutSpacing { 4_dp } });
+              } AUI_OVERRIDE_STYLE { LayoutSpacing { 2_dp }, Padding { 0, 4_dp } })
+              .build() AUI_OVERRIDE_STYLE { BackgroundSolid { AColor::WHITE } },
+        } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } },
+        CustomLayout::Expanding {} AUI_LET {
+            AObject::connect(mSelectedGroup, tabHost, [tabHost, &it = *it](const _<Group>& selectedGroup) {
+                if (selectedGroup == nullptr) {
+                    ALayoutInflater::inflate(it, Centered { Label { "No group selected" } });
+                    return;
+                }
+                ALayoutInflater::inflate(it, groupEditor(selectedGroup));
+            });
+        },
+      } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } },
+    } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } });
 }

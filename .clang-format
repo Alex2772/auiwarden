@@ -32,13 +32,13 @@ SortIncludes: Never
 BracedInitializerIndentWidth: 2
 ConstructorInitializerIndentWidth: 2
 
-# better spacing around AUI_WITH_STYLE and let.
+# better spacing around AUI_OVERRIDE_STYLE and let.
 # before:
-# view AUI_WITH_STYLE{Expanding()},
+# view AUI_OVERRIDE_STYLE{Expanding()},
 # view let{printf("Hello");},
 #
 # after:
-# view AUI_WITH_STYLE { Expanding() },
+# view AUI_OVERRIDE_STYLE { Expanding() },
 # view let { printf("Hello"); },
 Cpp11BracedListStyle: false
 SpaceBeforeCpp11BracedList: true

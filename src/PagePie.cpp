@@ -92,23 +92,23 @@ _<AView> pieWithLegend(AStringView title, const _<State>& state, std::chrono::lo
         SpacerFixed { 16_dp },
         Horizontal {
           Centered {
-            _new<PieChartView>(value) AUI_WITH_STYLE { FixedSize { 200_dp, 200_dp } },
+            _new<PieChartView>(value) AUI_OVERRIDE_STYLE { FixedSize { 200_dp, 200_dp } },
             Vertical {
-              Label { std::move(title) } AUI_WITH_STYLE { FontSize { 14_pt }, ATextAlign::CENTER },
-              Label { "{:%D} + {}"_format(pointOfInterestBegin, floor<days>(durationOfInterest)) } AUI_WITH_STYLE { FontSize { 9_pt }, ATextAlign::CENTER },
+              Label { std::move(title) } AUI_OVERRIDE_STYLE { FontSize { 14_pt }, ATextAlign::CENTER },
+              Label { "{:%D} + {}"_format(pointOfInterestBegin, floor<days>(durationOfInterest)) } AUI_OVERRIDE_STYLE { FontSize { 9_pt }, ATextAlign::CENTER },
             },
           },
           Centered {
             AUI_DECLARATIVE_FOR(i, **value, AVerticalLayout) {
                 return Horizontal {
                     Centered {
-                      _new<AView>() AUI_WITH_STYLE { FixedSize { 12_dp, 12_dp }, BackgroundSolid { i.color } } },
+                      _new<AView>() AUI_OVERRIDE_STYLE { FixedSize { 12_dp, 12_dp }, BackgroundSolid { i.color } } },
                     Label {
                       "{} - {}% - {}min"_format(i.title, int(i.degrees.degrees() / 360.f * 100), i.minutes.count()) },
-                } AUI_WITH_STYLE { LayoutSpacing { 2_dp } };
+                } AUI_OVERRIDE_STYLE { LayoutSpacing { 2_dp } };
             },
           },
-        } AUI_WITH_STYLE { LayoutSpacing { 8_dp } },
+        } AUI_OVERRIDE_STYLE { LayoutSpacing { 8_dp } },
     };
 }
 }   // namespace
@@ -118,7 +118,7 @@ _<AView> views::pagePie(const _<State>& state) {
 
     auto view = Centered::Expanding {
         Vertical {
-          Label { "Summary" } AUI_WITH_STYLE { FontSize { 16_pt } },
+          Label { "Summary" } AUI_OVERRIDE_STYLE { FontSize { 16_pt } },
           SpacerFixed { 8_dp },
           pieWithLegend("Today", state, floor<days>(current_zone()->to_local(*state->currentTime)), days(1)),
           pieWithLegend("Last 24H", state, current_zone()->to_local(*state->currentTime) - days(1), days(1)),
@@ -126,7 +126,7 @@ _<AView> views::pagePie(const _<State>& state) {
           pieWithLegend("Last 7D", state, current_zone()->to_local(*state->currentTime) - days(7), days(7)),
           pieWithLegend("Last 30D", state, current_zone()->to_local(*state->currentTime) - days(30), days(30)),
           SpacerFixed { 8_dp },
-        } AUI_WITH_STYLE { Expanding(), MaxSize { 500_dp, {} } },
+        } AUI_OVERRIDE_STYLE { Expanding(), MaxSize { 500_dp, {} } },
     };
     return AScrollArea::Builder().withContents(view).build();
 }

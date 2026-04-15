@@ -41,7 +41,7 @@ _<AView> leftBarButton(_<AView> content, aui::invocable auto && onClick) {
     return Button {
         .content = content,
         .onClick = std::move(onClick)
-    } AUI_WITH_STYLE {
+    } AUI_OVERRIDE_STYLE {
         MinSize { 0, 0 },
         FixedSize { 32_dp, 32_dp },
     };
@@ -62,16 +62,20 @@ void MainWindow::inflate() {
         _new<AHDividerView>(),
         SpacerExpanding { },
         leftBarButton(Icon { ":img/settings.svg" }, [this] { _new<SettingsWindow>(mState, this)->show(); }),
-      } AUI_WITH_STYLE { Padding { 4_dp }, LayoutSpacing { 4_dp } },
-      CustomLayout::Expanding {} & mState->currentPage.readProjected([this](State::Page page) -> _<AView> {
-          switch (page) {
+      } AUI_OVERRIDE_STYLE { Padding { 4_dp }, LayoutSpacing { 4_dp } },
+      CustomLayout::Expanding {} AUI_LET {
+          AObject::connect(mState->currentPage, it, [this, &it = *it](State::Page page) {
+              switch (page) {
               case State::Page::MAIN:
-                  return views::pageMain(mState);
+                  ALayoutInflater::inflate(it, views::pageMain(mState));
+                  break;
               case State::Page::PIE:
-                  return views::pagePie(mState);
-          }
-      }),
-    } AUI_WITH_STYLE { LayoutSpacing { 4_dp } });
+                  ALayoutInflater::inflate(it, views::pagePie(mState));
+                  break;
+              }
+          });
+      }
+    } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } });
 }
 
 void MainWindow::save() {

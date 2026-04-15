@@ -20,7 +20,7 @@ _<AView> declarative::weekDay(std::chrono::weekday weekday, const _<State>& stat
     };
     return Horizontal {
         Label { AUI_REACT("{} {:%d}"_format(weekday, day())) },
-    } AUI_WITH_STYLE { Expanding() };
+    } AUI_OVERRIDE_STYLE { Expanding() };
 }
 
 struct TimeSpanViewModel {
@@ -31,7 +31,7 @@ struct TimeSpanViewModel {
 static TimeSpanViewModel groupify(const Database& database, const TimeSpan& span) {
     const auto& groups = *database.groups;
     for (const auto& group : groups) {
-        aui::react::DependencyObserverRegistrar::addDependency(group->windowTitleContains.changed);
+        aui::react::DependencyObserverScope::addDependency(group->windowTitleContains.changed);
     }
     auto group = database.findGroup(span.title);
 
@@ -87,8 +87,8 @@ static _<AView> dayContent(
         });
     return AUI_DECLARATIVE_FOR(i, state->database.spans | toGroups, AAbsoluteLayout) {
         _<AView> view = Vertical {
-            Label { i.timespan.title } AUI_WITH_STYLE { BackgroundSolid { i.color }, Expanding {} },
-        } AUI_WITH_STYLE {
+            Label { i.timespan.title } AUI_OVERRIDE_STYLE { BackgroundSolid { i.color }, Expanding {} },
+        } AUI_OVERRIDE_STYLE {
             AOverflow::HIDDEN,
             on_state::Hovered {
                 AOverflow::VISIBLE,
@@ -127,16 +127,19 @@ static _<AView> dayContent(
 
 _<AView> declarative::weekContent(const _<GridView>& gridView, const _<State>& state) {
     auto day = [&](std::chrono::weekday weekday) {
-        return CustomLayout {} &
-               state->currentTime.readProjected([gridView, state, weekday](TimeSpan::Timepoint now) -> _<AView> {
-                   const year_month_day today { floor<days>(current_zone()->to_local(now)) };
-                   auto targetDay = sys_days(utils::date::getLastWeekdayUpTo(weekday, today));
-                   return dayContent(state, gridView, targetDay);
-               }) AUI_WITH_STYLE { Expanding() };
+        return CustomLayout {}
+            AUI_OVERRIDE_STYLE { Expanding() }
+            AUI_LET {
+                AObject::connect(state->currentTime, it, [&it = *it, gridView, state, weekday](TimeSpan::Timepoint now) {
+                    const year_month_day today { floor<days>(current_zone()->to_local(now)) };
+                    auto targetDay = sys_days(utils::date::getLastWeekdayUpTo(weekday, today));
+                    ALayoutInflater::inflate(it, dayContent(state, gridView, targetDay));
+                 });
+            } ;
     };
 
     return Horizontal::Expanding {
         day(std::chrono::Monday), day(std::chrono::Tuesday),  day(std::chrono::Wednesday),
         day(std::chrono::Thursday), day(std::chrono::Friday), day(std::chrono::Saturday), day(std::chrono::Sunday),
-    } AUI_WITH_STYLE { LayoutSpacing { 1_px } };
+    } AUI_OVERRIDE_STYLE { LayoutSpacing { 1_px } };
 }
