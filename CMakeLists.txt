@@ -69,9 +69,13 @@ if(AUI_PLATFORM_LINUX)
         add_custom_command(OUTPUT ${OUTPUT_NAME}.c
                 COMMAND wayland-scanner private-code ${WAYLAND_PROTOCOL_PATH} ${OUTPUT_NAME}.c)
         target_sources(${PROJECT_NAME} PRIVATE ${OUTPUT_NAME}.h ${OUTPUT_NAME}.c)
+        target_sources(Tests PRIVATE ${OUTPUT_NAME}.h ${OUTPUT_NAME}.c)
     endforeach ()
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
     target_link_libraries(${PROJECT_NAME} PRIVATE wayland-client)
+
+    target_include_directories(Tests PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+    target_link_libraries(Tests PRIVATE wayland-client)
 endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
