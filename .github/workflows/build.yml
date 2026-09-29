@@ -118,6 +118,15 @@ jobs:
           cmake --build . --config RelWithDebInfo
           cpack . -CRelWithDebInfo -B artifacts
 
+      - name: Pack AppImage
+        if: runner.os == 'Linux'
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake . -DAUI_APP_PACKAGING=AUI_APPIMAGE
+          cmake --build . --config RelWithDebInfo
+          cpack . -CRelWithDebInfo -B artifacts
+          rm -f artifacts/*.json # CPack External generator's manifest
+
       - name: Upload
         uses: actions/upload-artifact@v4
         with:

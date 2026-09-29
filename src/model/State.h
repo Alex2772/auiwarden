@@ -10,9 +10,7 @@ struct State: public AObject {
         connect(updateTimer->fired, [this]() {
             currentTime.invalidate();
         });
-#if !AUI_DEBUG
         updateTimer->start();
-#endif
     }
 
     Database database;

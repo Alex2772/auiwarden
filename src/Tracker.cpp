@@ -7,10 +7,17 @@
 #include <AUI/Util/UIBuildingHelpers.h>
 #include "Tracker.h"
 
+#include "AUI/AppInfo.h"
+#include "AUI/Platform/AMessageBox.h"
+
 using namespace std::chrono;
 
 TrackerManager::TrackerManager(_<State> state): mTrackers(getNativeTrackers()), mState(std::move(state)) {
     connect(mState->currentTime, me::update);
+
+    if (mTrackers.empty()) {
+        AMessageBox::show(nullptr, aui::app_info::name, "Your desktop environment is not supported. Supported DEs: GNOME, KDE.");
+    }
 }
 
 void TrackerManager::update() {
