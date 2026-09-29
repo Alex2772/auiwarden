@@ -15,7 +15,7 @@ include(aui.boot.cmake)
 
 # import AUI
 auib_import(aui https://github.com/aui-framework/aui
-        COMPONENTS core views curl json crypt updater remote_tools
+        COMPONENTS core views curl json crypt updater
         VERSION ${AUI_VERSION})
 
 
