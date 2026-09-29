@@ -61,7 +61,7 @@ void MainWindow::inflate() {
         pageButton(mState, Icon { ":img/pie.svg" }, State::Page::PIE),
         _new<AHDividerView>(),
         SpacerExpanding { },
-        leftBarButton(Icon { ":img/settings.svg" }, [this] { _new<SettingsWindow>(mState, this)->show(); }),
+        leftBarButton(Icon { ":img/settings.svg" }, [this] { _new<SettingsWindow>(mState, mUpdater, this)->show(); }),
       } AUI_OVERRIDE_STYLE { Padding { 4_dp }, LayoutSpacing { 4_dp } },
       CustomLayout::Expanding {} AUI_LET {
           AObject::connect(mState->currentPage, it, [this, &it = *it](State::Page page) {

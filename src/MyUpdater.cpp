@@ -17,7 +17,7 @@ static constexpr auto LOG_TAG = "MyUpdater";
 AFuture<void> MyUpdater::checkForUpdatesImpl() {
     return AUI_THREADPOOL {
         try {
-            auto githubLatestRelease = aui::updater::github::latestRelease("aui-framework", "example_app");
+            auto githubLatestRelease = aui::updater::github::latestRelease("alex2772", "auiwarden");
             ALogger::info(LOG_TAG) << "Found latest release: " << githubLatestRelease.tag_name;
             auto ourVersion = aui::updater::Semver::fromString(AUI_PP_STRINGIZE(AUI_CMAKE_PROJECT_VERSION));
             auto theirVersion = aui::updater::Semver::fromString(githubLatestRelease.tag_name);

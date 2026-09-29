@@ -4,6 +4,7 @@
 
 #include "SettingsWindow.h"
 #include "Groups.h"
+#include "About.h"
 #include <AUI/Util/UIBuildingHelpers.h>
 #include <AUI/View/AButton.h>
 #include <AUI/View/ADrawableView.h>
@@ -16,13 +17,14 @@ using namespace declarative;
 using namespace ass;
 
 
-SettingsWindow::SettingsWindow(_<State> state, AWindow *parent)
+SettingsWindow::SettingsWindow(_<State> state, _<MyUpdater> updater, AWindow *parent)
   : AWindow("Settings", 500_dp, 400_dp, parent, WindowStyle::MODAL), mState(std::move(state)) {
     auto tabHost = _new<ATabView>();
 
     tabHost->addTab(
         _new<Groups>(mState),
         "Grouping");
+    tabHost->addTab(_new<About>(std::move(updater)), "About");
     tabHost->setExpanding();
 
     setContents(Vertical::Expanding {
