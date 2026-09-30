@@ -66,8 +66,7 @@ _<AView> pieWithLegend(AStringView title, const _<State>& state, std::chrono::lo
         };
         AMap<_<Group>, minutes> groups;
         for (const auto& i : state->database.spans | ranges::view::filter(intersectsWithDay)) {
-            auto duration = minutes(i->end - i->begin);
-            groups[state->database.findGroup(i->title)] += duration + 1min; // adding 1min because duration is exclusive
+            groups[state->database.findGroup(i->title)] += i->duration();
         }
 
         std::vector<PieChartEntry> v =

@@ -70,7 +70,7 @@ static _<AView> dayContent(
                uint64_t(std::hash<AByteBufferView> {}(AByteBufferView::fromRaw(span.color))),
                uint64_t(std::hash<AString> {}(span.timespan.title)) }) {
             hash ^= i;
-            hash *= 0x9e3779b97f4a7c15;
+            hash *= 0x9e;
         }
         return hash;
     };
@@ -83,7 +83,9 @@ static _<AView> dayContent(
             }) |
         ranges::view::transform([](const auto& chunk) {
             auto copy = ranges::front(chunk);
-            copy.timespan.end = ranges::back(chunk).timespan.end;
+            const auto& last = ranges::back(chunk);
+            copy.timespan.begin = std::min(copy.timespan.begin, last.timespan.begin);
+            copy.timespan.end = std::max(copy.timespan.end, last.timespan.end);
             return copy;
         });
     return AUI_DECLARATIVE_FOR(i, state->database.spans | toGroups, AAbsoluteLayout) {
@@ -108,7 +110,7 @@ static _<AView> dayContent(
               },
           .size =
               [gridView, i] {
-                  auto timeRelativeToDay = minutes(i.timespan.end - i.timespan.begin) + 1min;
+                  auto timeRelativeToDay = minutes(i.timespan.duration());
                   auto y = int((timeRelativeToDay).count()) * gridView->size()->y / int(minutes(days(1)).count());
                   return glm::ivec2 { gridView->size()->x / 7, glm::max(y, 1) };
               },

@@ -50,7 +50,6 @@ About::About(_<MyUpdater> updater) : mUpdater(std::move(updater)) {
             },
             SpacerFixed{8_dp},
             Centered{
-                // SpacerExpanding(),
                 Button{
                     Label{ "Check for updates..." },
                     [this] { mUpdater->checkForUpdates(); },

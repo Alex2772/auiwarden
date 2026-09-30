@@ -9,4 +9,9 @@ struct TimeSpan {
     Timepoint begin;
     Timepoint end;
     AString title;
+
+    auto duration() const {
+        using namespace std::chrono_literals;
+        return end - begin + 1min; // adding 1min because duration is exclusive
+    }
 };
