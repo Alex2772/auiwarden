@@ -1,7 +1,7 @@
 # Standard routine
 cmake_minimum_required(VERSION 3.16)
 project(auiwarden
-        VERSION 0.0.13 # CI_PROJECT_VERSION
+        VERSION 0.0.14 # CI_PROJECT_VERSION
     )
 
 option(BUILD_SHARED_LIBS "Build shared libs" OFF)
