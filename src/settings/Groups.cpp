@@ -60,7 +60,7 @@ Groups::Groups(_<State> state) {
     };
 
     setContents(Vertical::Expanding {
-      AText::fromString("Grouping allows to categorize time spans into groups (e.g. work, home, gaming, etc.)"),
+      AText::fromString("Categorize time spans into groups (e.g. work, home, gaming, etc.)"),
       Horizontal::Expanding {
         Vertical::Expanding {
           Button {

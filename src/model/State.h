@@ -3,6 +3,7 @@
 #include <AUI/Common/APropertyPrecomputed.h>
 #include <AUI/Common/ATimer.h>
 #include "Database.h"
+#include "Settings.h"
 
 struct State: public AObject {
     State() {
@@ -14,6 +15,7 @@ struct State: public AObject {
     }
 
     Database database;
+    Settings settings = Settings::load();
     APropertyPrecomputed<TimeSpan::Timepoint> currentTime = [] {
         return floor<std::chrono::minutes>(std::chrono::system_clock::now());
     };
