@@ -10,6 +10,7 @@ class MainWindow: public AWindow {
 public:
     MainWindow(AArc<State> state, AArc<MyUpdater> updater);
     void onCloseButtonClicked() override;
+    void onKeyDown(AInput::Key key) override;
 
 private:
     AArc<State> mState;

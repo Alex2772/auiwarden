@@ -13,9 +13,15 @@
 #include "AUI/View/ACheckBox.h"
 #include "AUI/View/AGroupBox.h"
 #include "AUI/View/ARadioButton.h"
+#include "AUI/View/ASpacerFixed.h"
+#include "AUI/View/AText.h"
 
 using namespace declarative;
 using namespace ass;
+
+static AArc<AView> description(AString text) {
+    return AText::fromString(std::move(text)) AUI_OVERRIDE_STYLE { Opacity { 0.6f } };
+}
 
 _<AView> settings::tab::generalView(AArc<Settings> settings) {
     platform::isAutostartEnabled.invalidate();
@@ -50,8 +56,16 @@ _<AView> settings::tab::generalView(AArc<Settings> settings) {
                     .onClick = [settings] {
                         settings->allowBackgroundWork = true;
                     },
-                    .content = Label { "continue working in background" },
+                    .content = Vertical {
+                        Label { "continue working in background" },
+                    },
                 },
+#if AUI_PLATFORM_WIN || AUI_PLATFORM_LINUX
+                description("You can force-quit the application by pressing CTRL+Q."),
+#elif AUI_PLATFORM_MACOS
+                description("You can force-quit the application by pressing ⌘Q."),
+#endif
+                SpacerFixed { 4_dp },
                 RadioButton {
                     .checked = AUI_REACT(!settings->allowBackgroundWork),
                     .onClick = [settings] {

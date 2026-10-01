@@ -78,3 +78,15 @@ void MainWindow::onCloseButtonClicked() {
         mState->lifetimeHold.reset();
     }
 }
+
+void MainWindow::onKeyDown(AInput::Key key) {
+    AWindow::onKeyDown(key);
+    if (AInput::isKeyDown(AInput::LCONTROL)) {
+        switch (key) {
+            case AInput::Key::Q: // quit application
+                close();
+                mState->lifetimeHold.reset();
+                break;
+        }
+    }
+}
