@@ -15,6 +15,7 @@
 
 AJSON_FIELDS(Settings,
              AJSON_FIELDS_ENTRY(showProgramWindowOnStartup)
+             AJSON_FIELDS_ENTRY(allowBackgroundWork)
 )
 
 static constexpr auto LOG_TAG = "Settings";

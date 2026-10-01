@@ -8,14 +8,13 @@
 
 class MainWindow: public AWindow {
 public:
-    MainWindow(_<MyUpdater> updater);
+    MainWindow(AArc<State> state, AArc<MyUpdater> updater);
     void onCloseButtonClicked() override;
 
 private:
-    _<MyUpdater> mUpdater;
-    _<State> mState = _new<State>();
+    AArc<State> mState;
+    AArc<MyUpdater> mUpdater;
     TrackerManager mTrackerManager = mState;
 
     void inflate();
-    void save();
 };

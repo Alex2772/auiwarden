@@ -3,7 +3,9 @@
 #include <AUI/Common/APropertyPrecomputed.h>
 #include <AUI/Common/ATimer.h>
 #include "Database.h"
+#include "MyUpdater.h"
 #include "Settings.h"
+#include "AUI/Platform/AApplication.h"
 
 struct State: public AObject {
     State() {
@@ -19,6 +21,8 @@ struct State: public AObject {
     APropertyPrecomputed<TimeSpan::Timepoint> currentTime = [] {
         return floor<std::chrono::minutes>(std::chrono::system_clock::now());
     };
+
+    _<AApplication::Hold> lifetimeHold;
 
     enum class Page {
         MAIN,
