@@ -72,7 +72,7 @@ void MainWindow::inflate() {
 }
 
 void MainWindow::onCloseButtonClicked() {
-    AWindow::onCloseButtonClicked();
+    hide(); // instead of AWindow::onCloseButtonClicked(); which calls close()
 
     if (!mState->settings.allowBackgroundWork) {
         mState->lifetimeHold.reset();

@@ -23,7 +23,6 @@ static constexpr auto LOG_TAG = "Settings";
 static APath settingsJson() { return AApplication::inst().dataDir() / "settings.json"; }
 
 static void onFirstLaunch() {
-    platform::setAutostartEnabled(true);
 }
 
 Settings Settings::load() {
