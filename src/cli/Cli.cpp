@@ -102,7 +102,7 @@ sys_time<minutes> toSys(local_days day) {
     return floor<minutes>(current_zone()->to_sys(day, choose::earliest));
 }
 
-AString formatDate(local_days day) { return "{:%F}"_format(day); }
+AString formatDate(local_days day) { return "{:%F}"_format(day.time_since_epoch()); }
 
 AJson::Array toArray(auto&& range) {
     AJson::Array result;
@@ -244,7 +244,7 @@ int report(const Options& options) {
             { "to", formatDate(lastDay) },
             { "days", int((lastDay - firstDay).count()) + 1 },
             { "timezone", AString(current_zone()->name()) },
-            { "now", "{:%F %R}"_format(current_zone()->to_local(now)) },
+            { "now", "{:%F %R}"_format(current_zone()->to_local(now).time_since_epoch()) },
           } },
         { "total_minutes", total },
         { "by_group", std::move(groupsJson) },

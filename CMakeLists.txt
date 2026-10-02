@@ -62,7 +62,7 @@ aui_app(TARGET ${PROJECT_NAME}
 )
 
 if(AUI_PLATFORM_LINUX)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/wayland-generated-protocols)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/wayland-generated/protocols)
     file(GLOB_RECURSE WAYLAND_PROTOCOLS wayland-protocols/*.xml)
     foreach (WAYLAND_PROTOCOL_PATH ${WAYLAND_PROTOCOLS})
         get_filename_component(WAYLAND_PROTOCOL_NAME ${WAYLAND_PROTOCOL_PATH} NAME)
@@ -71,14 +71,17 @@ if(AUI_PLATFORM_LINUX)
                 COMMAND wayland-scanner client-header ${WAYLAND_PROTOCOL_PATH} ${OUTPUT_NAME}.h)
         add_custom_command(OUTPUT ${OUTPUT_NAME}.c
                 COMMAND wayland-scanner private-code ${WAYLAND_PROTOCOL_PATH} ${OUTPUT_NAME}.c)
-        target_sources(${PROJECT_NAME} PRIVATE ${OUTPUT_NAME}.h ${OUTPUT_NAME}.c)
-        target_sources(Tests PRIVATE ${OUTPUT_NAME}.h ${OUTPUT_NAME}.c)
+        list(APPEND WAYLAND_GENERATED_SOURCES ${OUTPUT_NAME}.h ${OUTPUT_NAME}.c)
     endforeach ()
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
-    target_link_libraries(${PROJECT_NAME} PRIVATE wayland-client)
+    # custom commands must belong to the same directory as the target consuming their outputs, so wrap them into a
+    # library which is shared between the app and Tests
+    add_library(wayland_generated STATIC ${WAYLAND_GENERATED_SOURCES})
+    target_include_directories(wayland_generated PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+    target_link_libraries(wayland_generated PUBLIC wayland-client)
+    set_target_properties(wayland_generated PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-    target_include_directories(Tests PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
-    target_link_libraries(Tests PRIVATE wayland-client)
+    target_link_libraries(${PROJECT_NAME} PRIVATE wayland_generated)
+    target_link_libraries(Tests PRIVATE wayland_generated)
 endif()
 
 if (TARGET aui::remote_tools)

@@ -95,7 +95,7 @@ _<AView> pieWithLegend(AStringView title, const _<State>& state, std::chrono::lo
             _new<PieChartView>(value) AUI_OVERRIDE_STYLE { FixedSize { 200_dp, 200_dp } },
             Vertical {
               Label { std::move(title) } AUI_OVERRIDE_STYLE { FontSize { 14_pt }, ATextAlign::CENTER },
-              Label { "{:%D} + {}"_format(pointOfInterestBegin, floor<days>(durationOfInterest)) } AUI_OVERRIDE_STYLE { FontSize { 9_pt }, ATextAlign::CENTER },
+              Label { "{:%D} + {}"_format(sys_time<seconds>(pointOfInterestBegin.time_since_epoch()), floor<days>(durationOfInterest)) } AUI_OVERRIDE_STYLE { FontSize { 9_pt }, ATextAlign::CENTER },
             },
           },
           Centered {
