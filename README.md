@@ -22,6 +22,28 @@ just how productive (or distracted) you are, without ever being judgmental or in
 - Tracks when are you AFK.
 - Organizes your activities into customizable groups for easy review and filtering.
 - Provides visualizations of your week and activity distribution.
+- Lets [Claude Code](https://claude.com/claude-code) read your activity report and judge you (see [AI Slop](#ai-slop)).
+
+## AI Slop
+
+AUIwarden has a command line interface designed to be consumed by AI agents. It prints JSON and never opens a window:
+
+```
+auiwarden cli report [--days N | --from YYYY-MM-DD [--to YYYY-MM-DD]] [--top N]
+auiwarden cli groups
+```
+
+`report` gives total tracked minutes, time per group, per day, per hour of day and the top window titles.
+
+To let Claude Code use it, open Settings → General → **AI Slop** and tick *Install AUIwarden skill to Claude*. This
+puts a skill to `~/.claude/skills/auiwarden/SKILL.md` (or `$CLAUDE_CONFIG_DIR/skills/auiwarden/`); unticking removes it.
+Then just ask Claude Code something like:
+
+> Summarize how I spent my last week according to auiwarden and give me recommendations.
+
+The skill is loaded only when relevant, so it costs nothing when you are not talking about your activity.
+
+The program writes a few startup log lines to stdout before the JSON; the JSON is always the last line.
 
 ## FAQ
 
@@ -77,7 +99,9 @@ Groups are configured through Settings → Grouping. Each group has:
 ### Where is data stored and can it be exported?
 
 **Data storage:**
-- **File**: `database.json` in the application directory
+- **File**: `database.json` in the application data directory (the same place as `settings.json`; Settings → General →
+  *Open app dir...*). Older versions kept it in the working directory the program was launched from, such a file is still
+  picked up if there is no `database.json` in the data directory yet
 - **Format**: JSON, making data readable and editable
 - **Structure**: contains `spans` (time intervals) and `groups` (group settings) arrays
 

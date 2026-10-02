@@ -2,10 +2,16 @@
 #include <AUI/Platform/AApplication.h>
 #include "MainWindow.h"
 #include "MyUpdater.h"
+#include "cli/Cli.h"
 
 static AArc<MainWindow> gMainWindow;
 
 AUI_ENTRY {
+    // `auiwarden cli ...` is a headless command line interface (see cli/Cli.h)
+    if (auto exitCode = cli::tryRun(args)) {
+        return *exitCode;
+    }
+
     // updater might relaunch the executable; handle it before taking the single instance lock
     auto updater = _new<MyUpdater>();
     updater->handleStartup(args);

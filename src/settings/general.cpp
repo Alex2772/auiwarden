@@ -4,6 +4,7 @@
 
 #include "general.h"
 
+#include "ai/ClaudeSkill.h"
 #include "platform/Autostart.h"
 
 #include "AUI/Platform/AApplication.h"
@@ -25,6 +26,7 @@ static AArc<AView> description(AString text) {
 
 _<AView> settings::tab::generalView(AArc<Settings> settings) {
     platform::isAutostartEnabled.invalidate();
+    aislop::isClaudeSkillInstalled.invalidate();
     return Vertical {
         GroupBox {
             CheckBox {
@@ -73,6 +75,23 @@ _<AView> settings::tab::generalView(AArc<Settings> settings) {
                     },
                     .content = Label { "quit application and stop collecting data" },
                 },
+            },
+        },
+        GroupBox {
+            Label { "AI Slop" },
+            Vertical {
+                CheckBox {
+                    .checked = AUI_REACT(*aislop::isClaudeSkillInstalled),
+                    .onCheckedChange = [](bool value) {
+                        try {
+                            aislop::setClaudeSkillInstalled(value);
+                        } catch (const std::exception& e) {
+                            ALogger::err("AI Slop") << "unable to change Claude skill: " << e.what();
+                        }
+                    },
+                    .content = Label { "Install AUIwarden skill to Claude" },
+                },
+                description("Lets Claude read your activity report, i.e. \"summarize how I spent my week and give recommendations\"."),
             },
         },
         Horizontal {
