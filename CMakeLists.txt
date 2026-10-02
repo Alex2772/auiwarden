@@ -75,7 +75,7 @@ if(AUI_PLATFORM_LINUX)
     target_link_libraries(Tests PRIVATE wayland-client)
 endif()
 
-if (AUI_PLATFORM_LINUX)
+if (TARGET aui::remote_tools)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         aui_link(${PROJECT_NAME} PRIVATE aui::remote_tools)
         aui_enable_hotswap(${PROJECT_NAME})
