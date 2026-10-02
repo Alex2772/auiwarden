@@ -47,10 +47,16 @@ aui_compile_assets(${PROJECT_NAME})
 # Enable testing
 aui_enable_tests(${PROJECT_NAME})
 
+set(PACKAGE_ID "ru.alex2772.auiwarden")
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(PACKAGE_ID "ru.alex2772.auiwarden.debug")
+endif ()
+
 # Setup icon, display name, etc
 aui_app(TARGET ${PROJECT_NAME}
         NAME "AUIwarden"
-        ID "ru.alex2772.auiwarden"
+        ID "${PACKAGE_ID}"
         VENDOR "AUI Project"
         ICON "assets/img/icon.svg"
 )

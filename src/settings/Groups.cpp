@@ -41,6 +41,7 @@ static _<AView> groupEditor(const _<Group>& group) {
         } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } },
         Vertical {
           AText::fromString("List of window captions that will belong to this group. Use new line to separate them."),
+          Icon { ":img/window-title.png" } AUI_OVERRIDE_STYLE { FixedSize { {}, 50_dp } },
           AScrollArea::Builder().withContents(_new<ATextArea>() && group->windowTitleContains).build()
               << ".input-"
                  "field",
