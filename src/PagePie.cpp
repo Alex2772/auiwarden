@@ -3,6 +3,7 @@
 //
 
 #include "PagePie.h"
+#include <fmt/chrono.h>
 #include <AUI/Util/UIBuildingHelpers.h>
 #include "view/TimeSpanView.h"
 #include <AUI/View/ALabel.h>
