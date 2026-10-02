@@ -88,9 +88,9 @@ const std::vector<DesktopEntry>& desktopEntries() {
                     if (!inSection) {
                         continue;
                     }
-                    if (line.rfind("Name=", 0) == 0 && entry.name.empty()) {
+                    if (line.starts_with("Name=") && entry.name.empty()) {
                         entry.name = line.substr(5);
-                    } else if (line.rfind("StartupWMClass=", 0) == 0) {
+                    } else if (line.starts_with("StartupWMClass=")) {
                         entry.wmClass = line.substr(15);
                     }
                 }

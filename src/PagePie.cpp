@@ -3,6 +3,7 @@
 //
 
 #include "PagePie.h"
+#include <fmt/chrono.h>
 #include <AUI/Util/UIBuildingHelpers.h>
 #include "view/TimeSpanView.h"
 #include <AUI/View/ALabel.h>
@@ -34,7 +35,7 @@ public:
         AView::render(ctx);
 
         static constexpr auto WIDTH = 32_dp;
-        ctx.render.roundedRectangleBorder(ASolidBrush { AColor::WHITE }, { 0, 0 }, getSize(), getSize().x / 2, WIDTH);
+        ctx.render.roundedRectangleBorder(ASolidBrush { AColor::WHITE }, { 0, 0 }, getSize(), getSize().x / 2.f, WIDTH);
 
         AAngleRadians accumulator = 0_deg;
         for (const auto& i : **mValues) {
@@ -42,7 +43,7 @@ public:
                 RenderHints::PushMask mask(ctx.render, [&] {
                     ctx.render.squareSector(ASolidBrush {}, { 0, 0 }, getSize(), accumulator, accumulator + i.degrees);
                 });
-                ctx.render.roundedRectangleBorder(ASolidBrush { i.color }, { 0, 0 }, getSize(), getSize().x / 2, WIDTH);
+                ctx.render.roundedRectangleBorder(ASolidBrush { i.color }, { 0, 0 }, getSize(), getSize().x / 2.f, WIDTH);
             }
             accumulator += i.degrees;
         }
@@ -94,7 +95,7 @@ _<AView> pieWithLegend(AStringView title, const _<State>& state, std::chrono::lo
             _new<PieChartView>(value) AUI_OVERRIDE_STYLE { FixedSize { 200_dp, 200_dp } },
             Vertical {
               Label { std::move(title) } AUI_OVERRIDE_STYLE { FontSize { 14_pt }, ATextAlign::CENTER },
-              Label { "{:%D} + {}"_format(pointOfInterestBegin, floor<days>(durationOfInterest)) } AUI_OVERRIDE_STYLE { FontSize { 9_pt }, ATextAlign::CENTER },
+              Label { "{:%D} + {}"_format(sys_time<seconds>(pointOfInterestBegin.time_since_epoch()), floor<days>(durationOfInterest)) } AUI_OVERRIDE_STYLE { FontSize { 9_pt }, ATextAlign::CENTER },
             },
           },
           Centered {

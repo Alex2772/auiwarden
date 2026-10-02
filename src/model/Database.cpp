@@ -10,11 +10,15 @@
 #include <range/v3/algorithm.hpp>
 #include <range/v3/numeric/accumulate.hpp>
 #include <AUI/Logging/ALogger.h>
+#include <AUI/IO/APath.h>
+#include <AUI/Platform/AApplication.h>
+
+#include "AUI/Util/kAUI.h"
 
 AJSON_FIELDS(Database,
              AJSON_FIELDS_ENTRY(spans)
              AJSON_FIELDS_ENTRY(groups)
-             )
+)
 
 // AJSON_FIELDS(Database::Day,
 //              AJSON_FIELDS_ENTRY(spans)
@@ -43,9 +47,23 @@ struct AJsonConv<std::chrono::time_point<T1, T2>> {
         dst = std::chrono::time_point<T1, T2>(T2(json.asLongInt()));
     }
 };
-Database Database::load() { return aui::from_json<Database>(AJson::fromStream(AFileInputStream("database.json"))); }
+static APath databasePath() { return AApplication::inst().dataDir() / "database.json"; }
 
-void Database::save() { AFileOutputStream("database.json") << aui::to_json(*this); }
+Database Database::load() {
+    auto path = databasePath();
+    AUI_DO_ONCE {
+        ALogger::info("Database") << "File: " << path;
+    }
+    if (!path.isRegularFileExists()) {
+        // older versions stored the database in the working directory.
+        if (APath legacy("database.json"); legacy.isRegularFileExists()) {
+            path = std::move(legacy);
+        }
+    }
+    return aui::from_json<Database>(AJson::fromStream(AFileInputStream(path)));
+}
+
+void Database::save() { AFileOutputStream(databasePath()) << aui::to_json(*this); }
 
 void Database::handleEvent(TimeSpan::Timepoint timepoint, AString activity) {
     ALOG_DEBUG("Database") << "{}, {}"_format(timepoint, activity);

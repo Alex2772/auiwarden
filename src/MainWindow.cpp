@@ -18,16 +18,9 @@
 
 using namespace declarative;
 
-MainWindow::MainWindow(_<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_dp), mUpdater(std::move(updater)) {
+MainWindow::MainWindow(AArc<State> state, AArc<MyUpdater> updater) : AWindow("AUIwarden", 700_dp, 500_dp), mState(std::move(state)), mUpdater(std::move(updater)) {
     using namespace std::chrono_literals;
 
-    try {
-        mState->database = Database::load();
-    } catch (const AException& e) {
-        ALogger::warn("MainWindow") << "Can't load database: " << e;
-    }
-
-    connect(mState->updateTimer->fired, me::save);
 #if __has_include(<AUI/Remote/AHotCodeReload.h>)
     connect(AHotCodeReload::inst().patchEnd, me::inflate);
 #endif
@@ -78,15 +71,22 @@ void MainWindow::inflate() {
     } AUI_OVERRIDE_STYLE { LayoutSpacing { 4_dp } });
 }
 
-void MainWindow::save() {
-    try {
-        mState->database.save();
-    } catch (const AException& e) {
-        ALogger::warn("MainWindow") << "Can't save database: " << e;
+void MainWindow::onCloseButtonClicked() {
+    hide(); // instead of AWindow::onCloseButtonClicked(); which calls close()
+
+    if (!mState->settings.allowBackgroundWork) {
+        mState->lifetimeHold.reset();
     }
 }
 
-void MainWindow::onCloseButtonClicked() {
-    AWindow::onCloseButtonClicked();
-    save();
+void MainWindow::onKeyDown(AInput::Key key) {
+    AWindow::onKeyDown(key);
+    if (AInput::isKeyDown(AInput::LCONTROL)) {
+        switch (key) {
+            case AInput::Key::Q: // quit application
+                close();
+                mState->lifetimeHold.reset();
+                break;
+        }
+    }
 }
