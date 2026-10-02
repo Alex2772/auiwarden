@@ -11,15 +11,19 @@ using namespace declarative;
 using namespace ass;
 
 static AString stateToString(const std::any& status) {
+    if (auto* value = std::any_cast<AUpdater::StatusIdle>(&status)) {
+        return " ";
+    }
     if (auto* value = std::any_cast<AUpdater::StatusCheckingForUpdates>(&status)) {
         return "Checking for updates...";
     }
     if (auto* value = std::any_cast<AUpdater::StatusDownloading>(&status)) {
-        return "Downloading...";
+        return "Downloading ({}%)..."_format(int(*value->progress) * 100);
     }
     if (auto* value = std::any_cast<AUpdater::StatusNotAvailable>(&status)) {
         return "Not available";
     }
+    ALogger::err("About") << "Unrecognized AUpdater status: " << status.type().name();
     return " ";
 }
 

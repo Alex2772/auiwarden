@@ -76,7 +76,7 @@ AFuture<void> MyUpdater::downloadUpdateImpl(const APath& unpackedUpdateDir) {
             AUI_ASSERTX(!mDownloadUrl.empty(), "make a successful call to checkForUpdates first");
             downloadAndUnpack(mDownloadUrl, unpackedUpdateDir);
             reportReadyToApplyAndRestart(makeDefaultInstallationCmdline());
-            applyUpdateAndRestart();
+            getThread()->enqueue([this, self = shared_from_this()]{ applyUpdateAndRestart(); });
         } catch (const AException& e) {
             ALogger::err(LOG_TAG) << "Can't check for updates: " << e;
             getThread()->enqueue([] {
