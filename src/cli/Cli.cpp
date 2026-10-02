@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iostream>
 
+#include <fmt/chrono.h>
 #include <range/v3/algorithm.hpp>
 
 #include <AUI/Common/AMap.h>
