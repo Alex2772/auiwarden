@@ -35,7 +35,7 @@ auiwarden cli groups
 
 `report` gives total tracked minutes, time per group, per day, per hour of day and the top window titles.
 
-To let Claude Code use it, open Settings → General → **AI Slop** and tick *Install AUIwarden skill to Claude*. This
+To let Claude Code use it, open Settings → General → **AI Slop** and tick *Let Claude access AUIwarden data*. This
 puts a skill to `~/.claude/skills/auiwarden/SKILL.md` (or `$CLAUDE_CONFIG_DIR/skills/auiwarden/`); unticking removes it.
 Then just ask Claude Code something like:
 

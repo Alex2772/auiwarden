@@ -89,9 +89,9 @@ _<AView> settings::tab::generalView(AArc<Settings> settings) {
                             ALogger::err("AI Slop") << "unable to change Claude skill: " << e.what();
                         }
                     },
-                    .content = Label { "Install AUIwarden skill to Claude" },
+                    .content = Label { "Let Claude access AUIwarden data" },
                 },
-                description("Lets Claude read your activity report, i.e. \"summarize how I spent my week and give recommendations\"."),
+                description("Installs a skill to ~/.claude/skills/auiwarden, so you can ask Claude i.e. \"summarize how I spent my week and give recommendations\". Your data is sent to Claude only when you ask."),
             },
         },
         Horizontal {
