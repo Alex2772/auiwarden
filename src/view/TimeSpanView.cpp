@@ -19,7 +19,8 @@ _<AView> declarative::weekDay(std::chrono::weekday weekday, const _<State>& stat
             weekday, year_month_day(floor<days>(current_zone()->to_local(*state->currentTime))));
     };
     return Horizontal {
-        Label { AUI_REACT("{} {:%d}"_format(weekday, day())) },
+        Label { AUI_REACT(
+            "{:%a} {:%d}"_format(sys_days(day()), sys_days(day()))) }, // sys_days: older libstdc++ can't format weekday
     } AUI_OVERRIDE_STYLE { Expanding() };
 }
 

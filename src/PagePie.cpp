@@ -35,7 +35,7 @@ public:
         AView::render(ctx);
 
         static constexpr auto WIDTH = 32_dp;
-        ctx.render.roundedRectangleBorder(ASolidBrush { AColor::WHITE }, { 0, 0 }, getSize(), getSize().x / 2, WIDTH);
+        ctx.render.roundedRectangleBorder(ASolidBrush { AColor::WHITE }, { 0, 0 }, getSize(), getSize().x / 2.f, WIDTH);
 
         AAngleRadians accumulator = 0_deg;
         for (const auto& i : **mValues) {
@@ -43,7 +43,7 @@ public:
                 RenderHints::PushMask mask(ctx.render, [&] {
                     ctx.render.squareSector(ASolidBrush {}, { 0, 0 }, getSize(), accumulator, accumulator + i.degrees);
                 });
-                ctx.render.roundedRectangleBorder(ASolidBrush { i.color }, { 0, 0 }, getSize(), getSize().x / 2, WIDTH);
+                ctx.render.roundedRectangleBorder(ASolidBrush { i.color }, { 0, 0 }, getSize(), getSize().x / 2.f, WIDTH);
             }
             accumulator += i.degrees;
         }
