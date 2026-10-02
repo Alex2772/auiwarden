@@ -102,7 +102,11 @@ sys_time<minutes> toSys(local_days day) {
     return floor<minutes>(current_zone()->to_sys(day, choose::earliest));
 }
 
-AString formatDate(local_days day) { return "{:%F}"_format(day.time_since_epoch()); }
+// fmt can't format local_time with older standard libraries, so reinterpret it as a (naive) sys_time
+template <typename Duration>
+sys_time<Duration> naive(local_time<Duration> t) { return sys_time<Duration>(t.time_since_epoch()); }
+
+AString formatDate(local_days day) { return "{:%F}"_format(naive(day)); }
 
 AJson::Array toArray(auto&& range) {
     AJson::Array result;
@@ -213,7 +217,7 @@ int report(const Options& options) {
         }
         daysJson.push_back(AJson {
           { "date", formatDate(day) },
-          { "weekday", "{:%a}"_format(day) },
+          { "weekday", "{:%a}"_format(naive(day)) },
           { "total_minutes", data.total },
           { "groups", std::move(groups) },
         });
@@ -244,7 +248,7 @@ int report(const Options& options) {
             { "to", formatDate(lastDay) },
             { "days", int((lastDay - firstDay).count()) + 1 },
             { "timezone", AString(current_zone()->name()) },
-            { "now", "{:%F %R}"_format(current_zone()->to_local(now).time_since_epoch()) },
+            { "now", "{:%F %R}"_format(naive(current_zone()->to_local(now))) },
           } },
         { "total_minutes", total },
         { "by_group", std::move(groupsJson) },
