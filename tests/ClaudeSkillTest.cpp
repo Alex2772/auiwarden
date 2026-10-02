@@ -7,7 +7,11 @@ TEST(ClaudeSkill, InstallAndRemove) {
     auto dir = APath::getDefaultPath(APath::TEMP) / "auiwarden_claude_skill_test";
     dir.removeFileRecursive();
     dir.makeDirs();
-    std::setenv("CLAUDE_CONFIG_DIR", dir.toStdString().c_str(), 1);
+#if AUI_PLATFORM_WIN
+    _putenv_s("CLAUDE_CONFIG_DIR", dir.toStdString().c_str());
+#else
+    setenv("CLAUDE_CONFIG_DIR", dir.toStdString().c_str(), 1);
+#endif
 
     aislop::isClaudeSkillInstalled.invalidate();
     EXPECT_FALSE(*aislop::isClaudeSkillInstalled);
