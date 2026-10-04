@@ -66,10 +66,9 @@ Database Database::load() {
 void Database::save() { AFileOutputStream(databasePath()) << aui::to_json(*this); }
 
 void Database::handleEvent(TimeSpan::Timepoint timepoint, AString activity) {
-    ALOG_DEBUG("Database") << "{}, {}"_format(timepoint, activity);
     using namespace std::chrono_literals;
 
-    if (!spans->empty()) {
+    if (!spans->empty() && !std::exchange(breakSpan, false)) {
         if (timepoint - spans->last()->end <= 3min) {
             if (spans->last()->title == activity) {
                 spans->last()->end = timepoint;

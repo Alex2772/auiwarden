@@ -5,6 +5,7 @@
 #include <range/v3/numeric/accumulate.hpp>
 #include "TimeSpanView.h"
 #include "utils/date.h"
+#include "model/SpanGrouping.h"
 #include <AUI/Util/UIBuildingHelpers.h>
 #include <AUI/View/ALabel.h>
 #include <AUI/View/AForEachUI.h>
@@ -24,34 +25,6 @@ _<AView> declarative::weekDay(std::chrono::weekday weekday, const _<State>& stat
     } AUI_OVERRIDE_STYLE { Expanding() };
 }
 
-struct TimeSpanViewModel {
-    TimeSpan timespan;
-    AColor color;
-};
-
-static TimeSpanViewModel groupify(const Database& database, const TimeSpan& span) {
-    const auto& groups = *database.groups;
-    for (const auto& group : groups) {
-        aui::react::DependencyObserverScope::addDependency(group->windowTitleContains.changed);
-    }
-    auto group = database.findGroup(span.title);
-
-    if (group == nullptr) {
-        return {
-            .timespan = span,
-            .color = AColor::RED,
-        };
-    }
-    return {
-        .timespan = {
-            .begin = span.begin,
-            .end = span.end,
-            .title = group->name,
-        },
-        .color = group->color,
-    };
-}
-
 static _<AView> dayContent(
     const _<State>& state, const _<GridView>& gridView,
     std::chrono::time_point<std::chrono::system_clock, std::chrono::days> dayUtc) {
@@ -62,7 +35,7 @@ static _<AView> dayContent(
         auto end = current_zone()->to_local(span->end);
         return begin >= day && begin <= day + days(1) || end >= day && end <= day + days(1);
     };
-    auto keyFunction = [dayUtc](const TimeSpanViewModel& span) {
+    auto keyFunction = [dayUtc](const span_grouping::GroupedSpan& span) {
         uint64_t hash = 0;
         for (auto i :
              { uint64_t(dayUtc.time_since_epoch().count()),
@@ -78,17 +51,8 @@ static _<AView> dayContent(
     auto toGroups =
         ranges::view::reverse |
         ranges::view::filter(intersectsWithDay) |
-        ranges::view::transform([=](const _<TimeSpan>& span) { return groupify(state->database, *span); }) |
-        ranges::view::chunk_by([](const TimeSpanViewModel& a, const TimeSpanViewModel& b) {
-                return std::tie(a.color, a.timespan.title) == std::tie(b.color, b.timespan.title) && b.timespan.begin - a.timespan.end <= 5min;
-            }) |
-        ranges::view::transform([](const auto& chunk) {
-            auto copy = ranges::front(chunk);
-            const auto& last = ranges::back(chunk);
-            copy.timespan.begin = std::min(copy.timespan.begin, last.timespan.begin);
-            copy.timespan.end = std::max(copy.timespan.end, last.timespan.end);
-            return copy;
-        });
+        ranges::view::transform([=](const _<TimeSpan>& span) { return span_grouping::groupify(state->database, *span); }) |
+        span_grouping::mergeAdjacent();
     return AUI_DECLARATIVE_FOR(i, state->database.spans | toGroups, AAbsoluteLayout) {
         _<AView> view = Vertical {
             Label { i.timespan.title } AUI_OVERRIDE_STYLE { BackgroundSolid { i.color }, Expanding {} },

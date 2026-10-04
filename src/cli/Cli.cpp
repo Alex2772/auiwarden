@@ -14,6 +14,7 @@
 #include <AUI/Traits/strings.h>
 
 #include "model/Database.h"
+#include "model/SpanGrouping.h"
 
 using namespace std::chrono;
 using namespace std::chrono_literals;
@@ -174,8 +175,8 @@ int report(const Options& options) {
         if (begin >= end) {
             continue;
         }
-        const auto group = database.findGroup(span->title);
-        const AString groupName = group ? *group->name : AString(UNCATEGORIZED);
+        const auto grouped = span_grouping::groupify(database, *span);
+        const AString groupName = grouped.group ? grouped.timespan.title : AString(UNCATEGORIZED);
         const auto title = span->title.empty() ? AString("(no title)") : span->title;
 
         for (auto t = begin; t < end; t += 1min) {

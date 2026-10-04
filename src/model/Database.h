@@ -7,6 +7,7 @@
 
 struct Database {
     AProperty<AVector<_<TimeSpan>>> spans;
+    bool breakSpan = false;
     AProperty<AVector<_<Group>>> groups = AVector<_<Group>>{
         aui::ptr::manage_shared(new Group{
             .name = "Web",
@@ -25,6 +26,11 @@ struct Database {
     static Database load();
     void save();
     void handleEvent(TimeSpan::Timepoint timepoint, AString activity);
+
+    /**
+     * @brief The user is away: the next event must start a new span instead of extending the last one.
+     */
+    void handleAfk() { breakSpan = true; }
 
     _<Group> findGroup(const AString& name) const;
 };
