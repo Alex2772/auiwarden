@@ -15,7 +15,6 @@ public:
 private:
     AArc<State> mState;
     AArc<MyUpdater> mUpdater;
-    TrackerManager mTrackerManager = mState;
 
     void inflate();
 };

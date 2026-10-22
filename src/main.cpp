@@ -5,6 +5,7 @@
 #include "cli/Cli.h"
 
 static AArc<MainWindow> gMainWindow;
+static _<TrackerManager> gTrackerManager;
 
 AUI_ENTRY {
     // `auiwarden cli ...` is a headless command line interface (see cli/Cli.h)
@@ -28,6 +29,9 @@ AUI_ENTRY {
     } catch (const AException& e) {
         ALogger::warn("MainWindow") << "Can't load database: " << e;
     }
+
+    // tracking must work even when the window is never created (--startup), so it is owned here and not by MainWindow
+    gTrackerManager = _new<TrackerManager>(state);
 
     AObject::connect(state->updateTimer->fired, state, [state = state.get()] {
         state->database.save();
