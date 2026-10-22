@@ -36,4 +36,5 @@ SettingsWindow::SettingsWindow(_<State> state, _<MyUpdater> updater, AWindow *pa
 void SettingsWindow::onCloseButtonClicked() {
     AWindow::onCloseButtonClicked();
     mState->database.save();
+    mState->settings.save();
 }
